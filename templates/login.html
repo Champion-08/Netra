@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>NETRA • Secure Login</title>
+<meta name="description" content="Authenticate to access the NETRA intelligence platform." />
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="auth-body">
+<canvas id="particles"></canvas>
+<div class="scanlines"></div>
+
+<div class="auth-shell">
+  <a href="{{ url_for('index') }}" class="auth-brand" data-testid="brand-link">
+    <svg viewBox="0 0 64 32" width="38" height="20">
+      <ellipse cx="32" cy="16" rx="28" ry="12" fill="none" stroke="#00e5ff" stroke-width="1.5"/>
+      <circle cx="32" cy="16" r="7" fill="none" stroke="#00e5ff" stroke-width="1.5"/>
+      <circle cx="32" cy="16" r="3" fill="#00e5ff"/>
+    </svg>
+    <span>NETRA</span>
+  </a>
+
+  <div class="auth-card" data-testid="login-card">
+    <div class="auth-badge">◈ SECURE TERMINAL</div>
+    <h1>Access Console</h1>
+    <p class="auth-sub">Authenticate to enter the intelligence hub.</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for cat, msg in messages %}
+        <div class="flash flash-{{ cat }}" data-testid="flash-{{ cat }}">{{ msg }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('login') }}" class="auth-form" data-testid="login-form">
+      <label>
+        <span>Email</span>
+        <input type="email" name="email" required autocomplete="email"
+               id="login-email" data-testid="login-email-input" placeholder="admin@netra.gov.in" />
+      </label>
+      <label>
+        <span>Password</span>
+        <input type="password" name="password" required autocomplete="current-password"
+               id="login-password" data-testid="login-password-input" placeholder="••••••••" />
+      </label>
+      <button type="submit" class="btn btn-primary btn-block" id="login-submit" data-testid="login-submit-btn">
+        ⏵ Login
+      </button>
+    </form>
+
+    <div class="auth-alt">
+      New operative? <a href="{{ url_for('register') }}" data-testid="register-link">Register &rarr;</a>
+    </div>
+
+    <div class="demo-creds" data-testid="demo-creds">
+      <div class="dc-title">DEMO CREDENTIALS</div>
+      <div><code>admin@netra.gov.in</code> · <code>admin123</code></div>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/particles.js') }}"></script>
+</body>
+</html>

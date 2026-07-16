@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>NETRA • Report Crime</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<style>
+  .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .report-grid label { display: flex; flex-direction: column; gap: .3rem; font-family: var(--font-mono); font-size: .7rem; letter-spacing: .14em; color: var(--text-dim); text-transform: uppercase; }
+  .report-grid input, .report-grid select { background: rgba(0,229,255,.04); border: 1px solid var(--border); padding: .6rem .8rem; color: #e8fdff; font-family: var(--font-mono); font-size: .9rem; outline: none; }
+  .report-grid input:focus, .report-grid select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,229,255,.15); }
+  .report-grid .full { grid-column: 1 / -1; }
+  @media (max-width: 600px) { .report-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body class="auth-body">
+<canvas id="particles"></canvas>
+<div class="scanlines"></div>
+
+<div class="auth-shell" style="max-width:700px;">
+  <a href="{{ url_for('dashboard') }}" class="auth-brand">
+    <svg viewBox="0 0 64 32" width="38" height="20">
+      <ellipse cx="32" cy="16" rx="28" ry="12" fill="none" stroke="#00e5ff" stroke-width="1.5"/>
+      <circle cx="32" cy="16" r="7" fill="none" stroke="#00e5ff" stroke-width="1.5"/>
+      <circle cx="32" cy="16" r="3" fill="#00e5ff"/>
+    </svg>
+    <span>NETRA</span>
+  </a>
+
+  <div class="auth-card">
+    <div class="auth-badge">◆ REPORT INCIDENT</div>
+    <h1>File a Crime Report</h1>
+    <p class="auth-sub">Enter the details of the incident below.</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for cat, msg in messages %}
+        <div class="flash flash-{{ cat }}">{{ msg }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    <form method="POST" class="auth-form">
+      <div class="report-grid">
+        <label>
+          <span>Crime Type</span>
+          <select name="crime_type" id="crime-type" required>
+            {% for ct in crime_types %}
+              <option value="{{ ct }}">{{ ct }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <label>
+          <span>District</span>
+          <select name="district" id="district" required>
+            {% for d in districts %}
+              <option value="{{ d }}">{{ d }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <label>
+          <span>Date</span>
+          <input type="date" name="date" id="report-date" required value="{{ now.strftime('%Y-%m-%d') if now else '' }}" />
+        </label>
+        <label>
+          <span>Time (24h)</span>
+          <input type="time" name="time" id="report-time" required value="{{ now.strftime('%H:%M') if now else '' }}" />
+        </label>
+        <label>
+          <span>Latitude</span>
+          <input type="number" step="any" name="lat" id="report-lat" required placeholder="e.g. 12.9716" />
+        </label>
+        <label>
+          <span>Longitude</span>
+          <input type="number" step="any" name="lon" id="report-lon" required placeholder="e.g. 77.5946" />
+        </label>
+        <label>
+          <span>Suspect (optional)</span>
+          <input type="text" name="suspect" id="report-suspect" placeholder="Unknown" />
+        </label>
+        <label>
+          <span>Victim (optional)</span>
+          <input type="text" name="victim" id="report-victim" placeholder="Unknown" />
+        </label>
+        <label>
+          <span>Modus Operandi</span>
+          <input type="text" name="modus_operandi" id="report-modus" placeholder="N/A" />
+        </label>
+        <label>
+          <span>Severity (1-5)</span>
+          <input type="number" name="severity" id="report-severity" min="1" max="5" value="3" />
+        </label>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">⏵ Submit Report</button>
+    </form>
+    <div class="auth-alt">
+      <a href="{{ url_for('dashboard') }}">← Back to Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/particles.js') }}"></script>
+</body>
+</html>

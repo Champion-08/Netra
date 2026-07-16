@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>NETRA • Command Dashboard</title>
+<meta name="description" content="NETRA AI-driven crime analytics command dashboard for Karnataka Police" />
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="dash-body">
+<canvas id="particles"></canvas>
+<div class="scanlines"></div>
+
+<div class="dash-layout">
+  <!-- ════════════════ SIDEBAR ════════════════ -->
+  <aside class="dash-sidebar" data-testid="dash-sidebar">
+    <div class="sidebar-logo">
+      <svg viewBox="0 0 64 32" width="34" height="18">
+        <ellipse cx="32" cy="16" rx="28" ry="12" fill="none" stroke="#00e5ff" stroke-width="1.5"/>
+        <circle cx="32" cy="16" r="7" fill="none" stroke="#00e5ff" stroke-width="1.5"/>
+        <circle cx="32" cy="16" r="3" fill="#00e5ff"/>
+      </svg>
+      <div class="brand-block">
+        <span class="brand-text">NETRA</span>
+        <span class="brand-tag">SCRB · KARNATAKA</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav" data-testid="sidebar-nav">
+      <div class="nav-section">Intelligence</div>
+      <a class="nav-item active" data-section="map" data-testid="nav-map">
+        <span class="ni-icon">🗺</span><span data-i18n="s_map">Map Intelligence</span>
+      </a>
+      <a class="nav-item" data-section="net" data-testid="nav-net">
+        <span class="ni-icon">🕸</span><span data-i18n="s_net">Link Analysis</span>
+      </a>
+      <a class="nav-item" data-section="analytics" data-testid="nav-analytics">
+        <span class="ni-icon">📊</span><span data-i18n="s_analytics">Analytics</span>
+      </a>
+      <a class="nav-item" data-section="intel" data-testid="nav-intel">
+        <span class="ni-icon">🧠</span><span data-i18n="s_intel">Intelligence</span>
+        <span class="nav-badge">New</span>
+      </a>
+      <a class="nav-item" data-section="reports" data-testid="nav-reports">
+        <span class="ni-icon">📋</span><span data-i18n="s_reports">Reports</span>
+      </a>
+
+      <div class="nav-section" style="margin-top:.8rem">Actions</div>
+      {% if current_user.role in ['admin', 'investigator'] %}
+      <a class="nav-item" href="{{ url_for('report_crime') }}" data-testid="nav-report">
+        <span class="ni-icon">📝</span><span>Report Crime</span>
+      </a>
+      {% endif %}
+      <a class="nav-item" href="{{ url_for('hotspots_page') }}" data-testid="nav-hotspots">
+        <span class="ni-icon">🔥</span><span>Hotspot Analysis</span>
+      </a>
+      {% if current_user.role == 'admin' %}
+      <a class="nav-item" href="{{ url_for('admin_users') }}" data-testid="nav-admin">
+        <span class="ni-icon">👥</span><span>User Management</span>
+      </a>
+      {% endif %}
+      <a class="nav-item" href="{{ url_for('profile') }}" data-testid="nav-profile">
+        <span class="ni-icon">⚙</span><span>Profile</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="sidebar-user">
+        <div class="su-avatar">{{ current_user.username[0]|upper }}</div>
+        <div>
+          <div class="su-name">{{ current_user.username }}</div>
+          <div class="su-role">{{ current_user.role }}</div>
+        </div>
+      </div>
+      <div class="sidebar-status">
+        <span class="dot dot-live"></span><span>System Online</span>
+      </div>
+      <div style="margin-top:.5rem">
+        <a href="{{ url_for('logout') }}" class="btn btn-ghost btn-sm btn-block" data-testid="logout-btn">Logout</a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ════════════════ MAIN ════════════════ -->
+  <div class="dash-main">
+    <!-- Topbar -->
+    <header class="dash-topbar" data-testid="dash-topbar">
+      <span class="topbar-title" id="section-title" data-testid="section-title">Map Intelligence</span>
+      <div class="topbar-sep"></div>
+      <div class="topbar-filters" data-testid="topbar-filters">
+        <select id="filter-district" class="mini" data-testid="filter-district">
+          <option value="all">All Districts</option>
+        </select>
+        <select id="filter-crime" class="mini" data-testid="filter-crime">
+          <option value="all">All Crimes</option>
+        </select>
+        <select id="lang-switcher" class="lang" data-testid="lang-switcher">
+          <option value="en">EN</option>
+          <option value="kn">ಕನ್ನಡ</option>
+          <option value="hi">हिं</option>
+        </select>
+        <button id="scan-btn" class="btn btn-primary btn-sm" data-testid="scan-btn">⟳ SCAN</button>
+      </div>
+      <div class="topbar-stats" data-testid="topbar-stats">
+        <div class="t-stat">
+          <span class="t-stat-label">Incidents</span>
+          <span class="t-stat-value" id="stat-total" data-testid="stat-total">—</span>
+        </div>
+        <div class="t-stat t-stat-alert">
+          <span class="t-stat-label">Anomalies</span>
+          <span class="t-stat-value" id="stat-anom" data-testid="stat-anom">—</span>
+        </div>
+        <div class="t-stat" style="min-width:110px">
+          <span class="t-stat-label">System Time</span>
+          <span class="t-stat-value" id="dash-clock" style="font-size:.78rem">—</span>
+        </div>
+        {% if current_user.role == 'admin' %}
+        <label class="btn btn-outline btn-sm" style="align-self:center" data-testid="upload-btn">
+          ↑ CSV
+          <input type="file" id="csv-upload" accept=".csv" hidden />
+        </label>
+        {% endif %}
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="dash-content" data-testid="dash-content">
+
+      <!-- ── MAP SECTION ─────────────────────────────────────── -->
+      <div class="section-panel active" data-panel="map" data-testid="section-map">
+        <div class="map-section-grid" style="flex:1;min-height:0">
+          <!-- Map panel -->
+          <section class="panel panel-map" data-testid="panel-map">
+            <div class="panel-head">
+              <h2>◈ Geospatial Surveillance</h2>
+              <div class="panel-controls">
+                <div class="toggle-group" data-testid="map-toggle">
+                  <button class="tg active" data-view="crimes" data-testid="toggle-crimes">📍 Crimes</button>
+                  <button class="tg" data-view="heat"    data-testid="toggle-heat">🌡 Heatmap</button>
+                  <button class="tg" data-view="cluster" data-testid="toggle-cluster">⬡ Clusters</button>
+                  <button class="tg" data-view="forecast" data-testid="toggle-forecast">🔮 Forecast</button>
+                </div>
+              </div>
+            </div>
+            <div id="map-main" data-testid="leaflet-map"></div>
+            <div class="risk-legend hidden" id="risk-legend" data-testid="risk-legend">
+              <span><i style="background:#ff0055;border-radius:2px"></i>High</span>
+              <span><i style="background:#ff8c00;border-radius:2px"></i>Medium</span>
+              <span><i style="background:#00e5ff;border-radius:2px"></i>Low</span>
+            </div>
+          </section>
+
+          <!-- Side panels -->
+          <div class="map-side-panels">
+            <!-- Mini stats -->
+            <section class="panel" style="flex:0 0 auto" data-testid="panel-mini-stats">
+              <div class="panel-head"><h2>◇ District Pulse</h2></div>
+              <div id="mini-stats-content" style="padding:.6rem;font-family:var(--font-mono);font-size:.72rem;flex:1;overflow-y:auto">
+                <div style="color:var(--text-dim);text-align:center;padding:1rem">Loading…</div>
+              </div>
+            </section>
+
+            <!-- Anomalies ticker -->
+            <section class="panel" style="flex:1;min-height:0" data-testid="panel-anomalies">
+              <div class="panel-head"><h2>⚠ Flagged Incidents</h2></div>
+              <div id="anomaly-list" style="flex:1;overflow-y:auto;padding:.5rem;display:flex;flex-direction:column;gap:.4rem">
+                <div style="color:var(--text-dim);font-family:var(--font-mono);font-size:.72rem;text-align:center;padding:1rem">Loading…</div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── NETWORK SECTION ─────────────────────────────────── -->
+      <div class="section-panel" data-panel="net" data-testid="section-net">
+        <div class="net-section-grid" style="flex:1;min-height:0">
+          <section class="panel" data-testid="panel-network">
+            <div class="panel-head">
+              <h2>◉ Criminal Link Analysis</h2>
+              <span class="panel-hint">click suspect → profile · drag · scroll-zoom</span>
+            </div>
+            <div id="cy" data-testid="cy-graph"></div>
+          </section>
+          <section class="panel" data-testid="panel-net-info">
+            <div class="panel-head"><h2>Top Suspects</h2></div>
+            <div class="net-info-panel" id="offender-list" data-testid="offender-list">
+              <div style="color:var(--text-dim);font-family:var(--font-mono);font-size:.72rem">Loading…</div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- ── ANALYTICS SECTION ───────────────────────────────── -->
+      <div class="section-panel" data-panel="analytics" data-testid="section-analytics">
+        <div class="analytics-grid" style="flex:1;min-height:0">
+          <section class="panel" data-testid="panel-trend">
+            <div class="panel-head"><h2>◇ Monthly Trend</h2></div>
+            <div class="chart-wrap"><canvas id="chart-trend" data-testid="chart-trend"></canvas></div>
+          </section>
+          <section class="panel" data-testid="panel-dist">
+            <div class="panel-head"><h2>◇ District Distribution</h2></div>
+            <div class="chart-wrap"><canvas id="chart-district" data-testid="chart-district"></canvas></div>
+          </section>
+          <section class="panel" data-testid="panel-pie">
+            <div class="panel-head"><h2>◇ Crime Type Share</h2></div>
+            <div class="chart-wrap"><canvas id="chart-crime-pie" data-testid="chart-crime-pie"></canvas></div>
+          </section>
+          <section class="panel" data-testid="panel-heatgrid">
+            <div class="panel-head"><h2>◇ Temporal Pattern</h2></div>
+            <div id="temporal-mini" style="flex:1;overflow:auto;padding:.6rem;font-family:var(--font-mono);font-size:.68rem">
+              <div style="color:var(--text-dim);padding:1rem;text-align:center">
+                Visit <a href="{{ url_for('hotspots_page') }}" style="color:var(--primary)">Hotspot Analysis</a> for full spatiotemporal view.
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- ── INTELLIGENCE SECTION ────────────────────────────── -->
+      <div class="section-panel" data-panel="intel" data-testid="section-intel">
+        <div class="intel-grid" style="overflow-y:auto;padding-bottom:.5rem">
+          <!-- Trend Spikes -->
+          <section class="panel" data-testid="panel-spikes">
+            <div class="panel-head"><h2>📈 Trend Spikes</h2><span class="panel-hint">month-over-month</span></div>
+            <div id="spike-list" style="flex:1;overflow-y:auto"></div>
+          </section>
+
+          <!-- DBSCAN Clusters -->
+          <section class="panel" data-testid="panel-clusters">
+            <div class="panel-head">
+              <h2>⬡ Crime Clusters</h2>
+              <span class="panel-hint" id="cluster-count"></span>
+            </div>
+            <div class="cluster-grid" id="cluster-cards" style="overflow-y:auto"></div>
+          </section>
+
+          <!-- Socio-Economic -->
+          <section class="panel" style="grid-column:1/-1" data-testid="panel-socio">
+            <div class="panel-head">
+              <h2>🌐 Socio-Economic Correlation</h2>
+              <span class="panel-hint">crime rate per 100k population</span>
+            </div>
+            <div style="flex:1;overflow:auto">
+              <table class="socio-table">
+                <thead>
+                  <tr>
+                    <th>District</th><th>Crimes</th><th>Rate/100k</th>
+                    <th>Unemployment</th><th>Literacy</th><th>Risk</th>
+                  </tr>
+                </thead>
+                <tbody id="socio-table-body"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Modus Operandi -->
+          <section class="panel" data-testid="panel-modus">
+            <div class="panel-head"><h2>🎭 Modus Operandi</h2></div>
+            <div id="modus-list" style="padding:.8rem 1rem;flex:1;overflow-y:auto"></div>
+          </section>
+
+          <!-- Risk Zones Summary -->
+          <section class="panel" data-testid="panel-risk-summary">
+            <div class="panel-head"><h2>🎯 Quick Intel</h2></div>
+            <div style="padding:.8rem;font-family:var(--font-mono);font-size:.78rem;line-height:1.8;color:var(--text-dim);flex:1">
+              <div>◈ Use the <strong style="color:var(--primary)">Map → Forecast</strong> view for district-level risk polygons</div>
+              <div>◈ Use <strong style="color:var(--primary)">Map → Heatmap</strong> for density visualization</div>
+              <div>◈ Use <strong style="color:var(--primary)">Map → Clusters</strong> for DBSCAN spatial groupings</div>
+              <div>◈ Click any suspect in <strong style="color:var(--primary)">Link Analysis</strong> for full profile</div>
+              <div>◈ Visit <a href="{{ url_for('hotspots_page') }}" style="color:var(--primary)">Hotspot Analysis</a> for hour-of-day matrix</div>
+              <div style="margin-top:1rem;padding:.8rem;background:rgba(255,0,85,.06);border:1px solid rgba(255,0,85,.2);border-left:3px solid var(--secondary)">
+                <div style="color:#ff9ab6;letter-spacing:.2em;font-size:.65rem;margin-bottom:.4rem">◈ ANOMALY DETECTION</div>
+                Isolation Forest (contamination=8%) flags geographic, temporal and severity outliers. Red pulsing markers on map indicate flagged events.
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- ── REPORTS SECTION ─────────────────────────────────── -->
+      <div class="section-panel" data-panel="reports" data-testid="section-reports">
+        <section class="panel reports-panel" data-testid="panel-reports">
+          <div class="panel-head">
+            <h2>📋 Crime Incident Database</h2>
+            <div class="panel-controls">
+              <button id="btn-anom-only" class="btn btn-sm btn-ghost" data-active="0" data-testid="btn-anom-only">⚠ Anomalies Only</button>
+              <button id="btn-export"    class="btn btn-sm btn-success" data-testid="btn-export">↓ Export CSV</button>
+            </div>
+          </div>
+          <div class="table-toolbar" data-testid="table-toolbar">
+            <input id="table-search" class="table-search" placeholder="Search suspect, victim, district, crime…" data-testid="table-search" />
+            <span class="table-count" id="table-count" data-testid="table-count">—</span>
+          </div>
+          <div class="crime-table-wrap" data-testid="crime-table-wrap">
+            <table class="crime-table" data-testid="crime-table">
+              <thead>
+                <tr>
+                  <th data-sort="id">ID</th>
+                  <th data-sort="crime_type">Type</th>
+                  <th data-sort="district">District</th>
+                  <th data-sort="date">Date</th>
+                  <th>Suspect</th>
+                  <th>Victim</th>
+                  <th>MO</th>
+                  <th data-sort="severity">Severity</th>
+                  <th data-sort="anomaly">⚠</th>
+                </tr>
+              </thead>
+              <tbody id="crime-tbody" data-testid="crime-tbody"></tbody>
+            </table>
+          </div>
+          <div class="table-pagination" id="table-pages" data-testid="table-pagination"></div>
+        </section>
+      </div>
+
+    </div><!-- /dash-content -->
+
+    <!-- Alert ticker -->
+    <div class="alert-ticker" data-testid="alert-ticker">
+      <div class="ticker-label">◉ LIVE ALERTS</div>
+      <div class="ticker-track" id="ticker-track"></div>
+    </div>
+  </div><!-- /dash-main -->
+</div><!-- /dash-layout -->
+
+<!-- AI Chat Widget -->
+<div class="chat-widget" data-testid="chat-widget">
+  <button id="chat-toggle" class="chat-toggle" data-testid="chat-toggle">
+    💬 <span>AI Analyst</span>
+  </button>
+  <div class="chat-box hidden" id="chat-box" data-testid="chat-box">
+    <div class="chat-head">
+      <span>◈ NETRA AI Analyst v2</span>
+      <button id="chat-close" data-testid="chat-close">✕</button>
+    </div>
+    <div class="chat-log" id="chat-log" data-testid="chat-log"></div>
+    <form id="chat-form" class="chat-form" data-testid="chat-form">
+      <input id="chat-input" placeholder="Ask anything about crime data…" autocomplete="off" data-testid="chat-input" />
+      <button type="submit" data-testid="chat-send">➤</button>
+    </form>
+  </div>
+</div>
+
+<!-- Toast host -->
+<div id="toast-host" class="toast-host" data-testid="toast-host"></div>
+
+<script>
+  window.NETRA_USER = { name: {{ current_user.username|tojson }}, role: {{ current_user.role|tojson }} };
+</script>
+<script src="{{ url_for('static', filename='js/particles.js') }}"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Leaflet.heat for density heatmap -->
+<script src="https://cdn.jsdelivr.net/npm/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="https://unpkg.com/cytoscape@3.28.1/dist/cytoscape.min.js"></script>
+<script>
+// Populate side panels after crimes load
+(function() {
+  const origFetch = window.fetch;
+  // Mini side panels populated via main.js hooks
+})();
+
+// Populate anomaly list and district pulse after load
+document.addEventListener('DOMContentLoaded', () => {
+  // These will be populated by main.js after data loads
+  setTimeout(async () => {
+    try {
+      const res  = await fetch('/api/crimes');
+      const data = await res.json();
+
+      // District pulse mini stats
+      const distCounts = {};
+      data.features.forEach(f => {
+        const d = f.properties.district;
+        distCounts[d] = (distCounts[d]||0) + 1;
+      });
+      const miniEl = document.getElementById('mini-stats-content');
+      if (miniEl) {
+        const sorted = Object.entries(distCounts).sort((a,b)=>b[1]-a[1]);
+        const max = sorted[0]?.[1] || 1;
+        miniEl.innerHTML = sorted.map(([d,c]) => `
+          <div style="margin-bottom:.5rem">
+            <div style="display:flex;justify-content:space-between;margin-bottom:.15rem">
+              <span style="color:var(--text);font-size:.7rem">${d}</span>
+              <span style="color:var(--primary)">${c}</span>
+            </div>
+            <div style="height:3px;background:rgba(0,229,255,.1);border-radius:2px">
+              <div style="width:${Math.round(c/max*100)}%;height:100%;background:var(--primary);border-radius:2px"></div>
+            </div>
+          </div>`).join('');
+      }
+
+      // Anomaly list
+      const anomEl = document.getElementById('anomaly-list');
+      if (anomEl) {
+        const anoms = data.features.filter(f=>f.properties.anomaly).slice(0, 20);
+        anomEl.innerHTML = anoms.map(f => {
+          const p = f.properties;
+          return `<a href="/crime/${p.id}" target="_blank" style="text-decoration:none">
+            <div style="padding:.4rem .6rem;background:rgba(255,0,85,.06);border:1px solid rgba(255,0,85,.2);display:flex;flex-direction:column;gap:.15rem;transition:background .15s ease" onmouseover="this.style.background='rgba(255,0,85,.12)'" onmouseout="this.style.background='rgba(255,0,85,.06)'">
+              <div style="display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:.7rem">
+                <span style="color:#ff9ab6;font-weight:600">#${p.id} ${p.crime_type}</span>
+                <span style="color:#ff0055">⚠️</span>
+              </div>
+              <div style="font-family:var(--font-mono);font-size:.65rem;color:var(--text-dim)">${p.district} · ${p.date?.slice(0,10)}</div>
+            </div>
+          </a>`;
+        }).join('');
+        if (!anoms.length) anomEl.innerHTML = '<div style="padding:1rem;color:var(--text-dim);font-family:var(--font-mono);font-size:.72rem;text-align:center">No anomalies detected.</div>';
+      }
+    } catch(e) {}
+  }, 1500);
+});
+</script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

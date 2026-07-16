@@ -1,0 +1,101 @@
+id,date,crime_type,district,lat,lon,suspect,victim,modus_operandi,severity,anomaly
+1,2026-02-26 23:08,Theft,Belagavi,15.88944,74.48664,Nihal Shere,Kabir Soman,Pickpocket,5,0
+2,2026-03-27 23:38,Theft,Mangaluru,12.96592,74.97784,Devika Rastogi,Raksha Varughese,Snatch & run,2,0
+3,2026-07-13 22:27,Theft,Mangaluru,12.89537,74.83727,Viraj Tiwari,Jai Kota,Shop-lift,1,0
+4,2026-01-21 00:46,Theft,Bengaluru Urban,13.09794,77.65599,Ayushman Chander,Ekiya Suresh,Pickpocket,5,1
+5,2026-01-12 18:45,Cyber Crime,Mysuru,12.25824,76.6828,Devansh Nigam,Yashica Cherian,Phishing,2,0
+6,2025-11-26 17:23,Burglary,Tumakuru,13.30383,77.06374,Nihal Shere,Victor Kannan,Lock break,5,0
+7,2026-03-13 20:24,Assault,Belagavi,15.86906,74.34464,Priya Rastogi,Kabir Soman,Weapon use,3,0
+8,2026-03-21 07:25,Fraud,Shivamogga,13.79191,75.52312,Saumya Mall,Alka Wable,Cheque bounce,2,0
+9,2025-08-21 20:16,Burglary,Kalaburagi,17.24867,76.85944,Ekavir Bhargava,Kabir Soman,Fake identity,5,0
+10,2026-01-12 12:32,Cyber Crime,Mangaluru,12.84146,74.74302,Diya Rattan,Ekansh Balay,Phishing,2,0
+11,2025-12-12 08:24,Fraud,Belagavi,15.96695,74.47964,Janaki Handa,Kabir Soman,Impersonation,1,1
+12,2026-03-02 23:18,Assault,Kalaburagi,17.3351,76.72032,Janaki Handa,Ekavir Varkey,Domestic,5,0
+13,2026-05-23 22:32,Assault,Ballari,15.09585,76.93027,Viraj Tiwari,Arya Sunder,Weapon use,5,0
+14,2026-07-16 16:01,Vandalism,Vijayapura,16.73812,75.74006,Kevin Solanki,Urvashi Ray,Graffiti,2,0
+15,2026-06-06 08:31,Vandalism,Bengaluru Urban,12.92355,77.57126,Diya Rattan,Upadhriti Wadhwa,Property damage,4,0
+16,2025-10-19 02:59,Theft,Vijayapura,16.78206,75.85818,Daksh Karnik,Yashica Cherian,Snatch & run,3,1
+17,2026-05-16 21:04,Assault,Mangaluru,12.91302,74.77138,Janya Gaba,Alka Wable,Weapon use,1,0
+18,2026-03-21 10:55,Cyber Crime,Bengaluru Urban,13.0374,77.49693,Fariq Kaul,Girindra Chatterjee,Ransomware,2,0
+19,2025-09-27 18:15,Cyber Crime,Hubballi,15.38141,74.96723,Dominic Kakar,Devansh Rajan,Phishing,4,0
+20,2026-06-19 09:25,Burglary,Mysuru,12.18955,76.65515,Dominic Kakar,Radhika Dugar,Window entry,2,0
+21,2026-04-14 00:15,Theft,Hubballi,15.42378,75.13771,Gagan Sami,Kabir Soman,Pickpocket,1,0
+22,2026-07-09 19:10,Assault,Kalaburagi,17.32045,76.81021,Chakradev Kari,Irya Sampath,Road-rage,1,1
+23,2025-12-29 00:18,Theft,Bengaluru Urban,12.85332,77.53701,Daksh Karnik,Kabir Soman,Snatch & run,2,0
+24,2026-06-17 20:20,Theft,Bengaluru Urban,12.93475,77.67917,Unni Bhagat,Ekapad Walia,Vehicle theft,1,0
+25,2026-04-12 21:04,Theft,Vijayapura,16.85769,75.56896,Nathaniel Sami,Alka Wable,Vehicle theft,5,0
+26,2025-12-14 19:36,Cyber Crime,Belagavi,15.87563,74.46689,Priya Rastogi,Darsh Rau,SIM swap,2,0
+27,2025-08-20 00:20,Theft,Mysuru,12.24165,76.68833,Priya Rastogi,Ikbal Kothari,Snatch & run,5,0
+28,2026-06-09 12:16,Drug Offense,Vijayapura,16.91268,75.7845,Ranveer Yadav,Logan Sami,Peddling,2,0
+29,2025-10-11 00:51,Theft,Mysuru,12.22866,76.61466,Aryan Maharaj,Kabir Soman,Shop-lift,1,1
+30,2026-05-18 21:35,Theft,Vijayapura,16.8567,75.78804,Gayathri Chaudry,Yashica Issac,Vehicle theft,3,0
+31,2026-06-20 21:27,Theft,Hubballi,15.32637,75.10915,Udant Dewan,Arya Shere,Vehicle theft,3,0
+32,2025-07-20 00:00,Assault,Bengaluru Urban,12.88309,77.4989,Faqid Savant,Upadhriti Wadhwa,Group attack,3,0
+33,2026-05-12 20:23,Theft,Belagavi,15.9147,74.6062,Dominic Kakar,Gavin Batta,Shop-lift,2,0
+34,2026-01-16 17:39,Cyber Crime,Kalaburagi,17.32394,76.91458,Priya Rastogi,Advay Contractor,OTP fraud,4,0
+35,2026-01-27 15:55,Cyber Crime,Bengaluru Urban,13.00053,77.54299,Nathaniel Sami,Chandresh Zachariah,Phishing,4,0
+36,2026-03-25 12:22,Fraud,Tumakuru,13.36981,77.22404,Dominic Kakar,Radhika Dugar,Impersonation,2,0
+37,2026-06-11 00:41,Theft,Mangaluru,12.91123,74.98117,Nihal Shere,Kabir Soman,Shop-lift,1,0
+38,2026-04-16 14:06,Drug Offense,Bengaluru Urban,12.76202,77.66035,Hemangini Lalla,Yashica Issac,Possession,5,1
+39,2025-09-24 23:02,Theft,Vijayapura,16.83716,75.68608,Aryan Maharaj,Kabir Soman,Vehicle theft,3,0
+40,2026-01-28 16:54,Vandalism,Mangaluru,12.92144,74.69699,Girik Khalsa,Ekapad Walia,Graffiti,4,0
+41,2025-10-06 11:26,Cyber Crime,Mysuru,12.27823,76.66797,Tripti Yadav,Advay Contractor,UPI scam,5,0
+42,2026-07-16 22:13,Assault,Mysuru,12.41403,76.59794,Janya Gaba,Yashica Issac,Road-rage,4,0
+43,2025-11-16 22:05,Theft,Mangaluru,12.84942,74.81586,Nihal Shere,Yashica Issac,Pickpocket,2,0
+44,2026-04-06 22:02,Theft,Kalaburagi,17.40293,76.8606,Chakradev Kari,Michael Dutta,Snatch & run,4,0
+45,2025-07-25 15:25,Cyber Crime,Tumakuru,13.29852,77.14206,Ekbal Garg,Devansh Rajan,Ransomware,2,0
+46,2025-10-24 20:35,Drug Offense,Bengaluru Urban,12.97937,77.67209,Tara Dhar,Niharika Sunder,Peddling,4,0
+47,2025-09-15 16:39,Drug Offense,Kalaburagi,17.27354,76.80809,Liam Koshy,Kabir Soman,Possession,2,0
+48,2026-03-06 21:17,Assault,Ballari,15.10803,76.80432,Fariq Kaul,Radhika Dugar,Domestic,4,0
+49,2026-02-27 16:57,Burglary,Bengaluru Urban,12.99529,77.61548,Viraj Tiwari,Tanay Rattan,Distraction,2,0
+50,2025-12-20 01:29,Theft,Kalaburagi,17.33011,76.81553,Saumya Mall,Ekiya Suresh,Pickpocket,5,1
+51,2026-01-17 00:54,Theft,Mangaluru,12.80087,74.82235,Simon Tata,Kabir Soman,Vehicle theft,4,0
+52,2026-07-02 00:42,Assault,Bengaluru Urban,12.94418,77.53042,Tripti Yadav,Wriddhish Bhardwaj,Weapon use,5,0
+53,2025-09-16 06:41,Vandalism,Hubballi,15.3518,75.15632,Tara Dhar,Gavin Batta,Graffiti,4,0
+54,2026-01-25 00:48,Assault,Mysuru,12.44669,76.65337,Kritika Brar,Nitesh Raghavan,Group attack,4,0
+55,2026-01-18 21:04,Assault,Bengaluru Urban,12.9922,77.58864,Ekbal Garg,Madhavi Lanka,Group attack,2,0
+56,2026-04-29 23:30,Theft,Bengaluru Urban,12.8181,77.59248,Janya Gaba,Wriddhish Bhardwaj,Shop-lift,3,0
+57,2026-05-19 11:06,Cyber Crime,Bengaluru Urban,12.97642,77.79166,Priya Rastogi,Bhavika Sampath,Ransomware,4,0
+58,2025-09-16 23:44,Theft,Vijayapura,16.81481,75.73412,Tara Dhar,Devansh Rajan,Pickpocket,3,0
+59,2026-06-11 17:21,Cyber Crime,Hubballi,15.36192,75.03051,Mohammed Gupta,Farhan Chada,Phishing,4,0
+60,2025-11-23 20:27,Cyber Crime,Vijayapura,16.92163,75.77015,Fariq Kaul,Aarush Lall,UPI scam,5,0
+61,2025-09-16 22:54,Assault,Ballari,15.20268,76.84865,Priya Rastogi,Teerth Bhardwaj,Road-rage,2,0
+62,2025-08-08 00:01,Assault,Ballari,15.25162,76.80925,Lajita Chatterjee,Dipta Bhandari,Weapon use,3,0
+63,2025-09-14 14:00,Burglary,Shivamogga,13.97685,75.74334,Saumya Mall,Vansha Thakkar,Distraction,4,0
+64,2025-11-15 03:50,Theft,Hubballi,15.28546,75.0787,Dakshesh Trivedi,Quincy Biswas,Snatch & run,2,0
+65,2025-11-16 17:22,Cyber Crime,Mysuru,12.30377,76.59912,Daksh Karnik,Kashvi Edwin,Ransomware,3,0
+66,2026-04-09 01:47,Theft,Mysuru,12.17175,76.64489,Diya Rattan,Harini Choudhury,Vehicle theft,4,0
+67,2025-10-21 18:06,Cyber Crime,Mysuru,12.21082,76.67729,Gayathri Chaudry,Wahab Raval,OTP fraud,3,0
+68,2026-02-26 18:35,Assault,Bengaluru Urban,12.89805,77.71859,Viraj Tiwari,Farhan Chada,Group attack,1,0
+69,2025-12-03 23:03,Assault,Belagavi,15.78704,74.47194,Tara Dhar,Michael Dutta,Road-rage,4,0
+70,2026-06-19 11:51,Cyber Crime,Bengaluru Urban,13.03668,77.49613,Gayathri Chaudry,Yatin Baral,OTP fraud,1,0
+71,2025-09-14 13:24,Burglary,Hubballi,15.3829,75.22857,Janaki Handa,Oni Virk,Distraction,3,0
+72,2026-05-27 23:13,Theft,Belagavi,15.7211,74.51247,Gagan Sami,Advika Jayaraman,Vehicle theft,5,0
+73,2025-11-28 03:02,Theft,Bengaluru Urban,12.99239,77.65715,Anamika Kanda,William Lanka,Snatch & run,1,0
+74,2025-08-30 12:07,Vandalism,Kalaburagi,17.23074,76.72866,Ekbal Garg,Karan Mital,Graffiti,2,0
+75,2026-02-09 00:07,Theft,Bengaluru Urban,13.01336,77.61836,Gayathri Chaudry,Aarush Lall,Snatch & run,4,0
+76,2025-12-07 01:16,Theft,Bengaluru Urban,12.99164,77.62232,Diya Bora,Tara Chaudhry,Pickpocket,3,0
+77,2026-04-18 21:41,Fraud,Belagavi,15.7953,74.51628,Arunima Dugal,Tanay Toor,Ponzi,4,0
+78,2025-12-19 23:42,Assault,Vijayapura,16.85365,75.65285,Kevin Palla,Yash Pingle,Road-rage,4,0
+79,2025-10-08 07:05,Vandalism,Mysuru,12.44506,76.67731,Lajita Chatterjee,Nakul Sarma,Graffiti,5,0
+80,2025-10-12 03:03,Theft,Shivamogga,13.8346,75.62062,Hemangini Lalla,Farhan Chada,Snatch & run,1,0
+81,2026-02-19 01:31,Assault,Bengaluru Urban,12.89363,77.65757,Abhiram Mistry,Siddharth Zacharia,Weapon use,2,0
+82,2025-12-20 21:53,Theft,Mysuru,12.38849,76.57375,Janaki Handa,Upadhriti Wadhwa,Snatch & run,3,0
+83,2025-11-11 03:29,Theft,Hubballi,15.44177,75.15702,Tripti Yadav,Krish Lalla,Vehicle theft,1,0
+84,2025-12-16 16:17,Fraud,Mysuru,12.36156,76.79114,Gayathri Chaudry,Alka Wable,Ponzi,2,0
+85,2026-01-27 02:24,Assault,Mangaluru,12.89447,74.7957,Lajita Chatterjee,Radhika Dugar,Road-rage,2,0
+86,2026-02-04 21:58,Burglary,Shivamogga,13.85874,75.50284,Tripti Yadav,Upadhriti Wadhwa,Distraction,1,0
+87,2026-01-28 09:06,Drug Offense,Bengaluru Urban,12.96543,77.62189,Janaki Handa,Hredhaan Dugal,Peddling,4,0
+88,2026-06-08 21:21,Drug Offense,Tumakuru,13.36304,77.16717,Tripti Yadav,Yashica Issac,Trafficking,5,0
+89,2025-11-09 07:04,Burglary,Mangaluru,12.91514,74.97228,Nihal Shere,Radhika Dugar,Lock break,4,0
+90,2025-07-21 09:10,Fraud,Vijayapura,16.80903,75.92761,Liam Koshy,Baghyawati Kade,Cheque bounce,1,1
+91,2026-05-03 13:26,Burglary,Mysuru,12.34585,76.57083,Dominic Kakar,Samar Lalla,Window entry,1,0
+92,2025-08-01 13:58,Burglary,Belagavi,15.76403,74.5363,Nathaniel Sami,Aarush Lall,Distraction,3,0
+93,2025-11-20 15:34,Vandalism,Kalaburagi,17.31182,76.89142,Janaki Handa,Alka Wable,Graffiti,4,0
+94,2026-02-12 21:54,Assault,Kalaburagi,17.36756,76.82847,Nathaniel Sami,Zayan Behl,Domestic,5,0
+95,2026-07-05 19:17,Cyber Crime,Mysuru,12.22806,76.51821,Pallavi Malhotra,Gavin Batta,UPI scam,4,0
+96,2026-03-21 17:40,Vandalism,Shivamogga,13.89418,75.63661,Arunima Dugal,Upadhriti Wadhwa,Arson attempt,1,0
+97,2026-02-08 16:37,Cyber Crime,Tumakuru,13.35803,77.00134,Viraj Tiwari,Aarush Nath,SIM swap,3,0
+98,2026-05-10 01:32,Theft,Ballari,15.15325,76.95223,Simon Tata,Adweta Edwin,Snatch & run,3,0
+99,2026-05-19 20:09,Burglary,Ballari,15.06869,76.9337,Nathaniel Sami,Ekiya Suresh,Fake identity,1,0
+100,2025-10-15 21:23,Theft,Shivamogga,13.93456,75.47666,Nihal Shere,Prisha Andra,Snatch & run,3,0

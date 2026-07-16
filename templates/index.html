@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>NETRA • Cyber Intelligence Command — Karnataka Police SCRB</title>
+<meta name="description" content="NETRA: AI-driven crime analytics & visualization platform for Karnataka State Police. Real-time geospatial surveillance, predictive risk scoring, and network link analysis." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="landing-body">
+<canvas id="particles"></canvas>
+<div class="scanlines"></div>
+<div class="grid-bg"></div>
+
+<!-- ────────────────────── NAV ────────────────────── -->
+<nav class="top-nav" data-testid="top-nav">
+  <div class="brand">
+    <svg viewBox="0 0 64 32" width="42" height="22">
+      <ellipse cx="32" cy="16" rx="28" ry="12" fill="none" stroke="#00e5ff" stroke-width="1.5"/>
+      <circle cx="32" cy="16" r="7" fill="none" stroke="#00e5ff" stroke-width="1.5"/>
+      <circle cx="32" cy="16" r="3" fill="#00e5ff"/>
+    </svg>
+    <div class="brand-block">
+      <span class="brand-text">NETRA</span>
+      <span class="brand-tag">STATE CRIME RECORDS BUREAU · KARNATAKA</span>
+    </div>
+  </div>
+  <div class="nav-status">
+    <span class="dot dot-live"></span>
+    <span>SYSTEM ONLINE</span>
+    <span class="nav-time" id="nav-time">--:--:--</span>
+  </div>
+  <div class="nav-actions">
+    <a href="{{ url_for('login') }}"    class="btn btn-ghost"   data-testid="nav-login">Login</a>
+    <a href="{{ url_for('register') }}" class="btn btn-primary" data-testid="nav-register">Get Access →</a>
+  </div>
+</nav>
+
+<main class="landing-main">
+
+  <!-- ══════════════════ HERO ══════════════════ -->
+  <section class="hero-row">
+    <div class="hero-left">
+      <div class="hero-meta">
+        <span class="meta-line">CLASSIFIED · DIVISION 04 · KARNATAKA</span>
+        <span class="meta-code">/ NTR-2026-0200</span>
+      </div>
+
+      <h1 class="mega-title" data-testid="landing-title">
+        <span class="mt-line">NEURAL</span>
+        <span class="mt-line mt-glow">THREAT<em>—</em></span>
+        <span class="mt-line mt-outline">INTELLIGENCE</span>
+      </h1>
+
+      <p class="hero-copy">
+        NETRA replaces siloed Excel records with a live, AI-driven command surface.
+        Track incidents across <b>10 districts</b>, correlate offenders through
+        <b>link analysis</b>, detect anomalies with <b>Isolation Forest</b>,
+        uncover spatial hotspots with <b>DBSCAN clustering</b>, and forecast
+        risk zones before they escalate — all from a single strategic hub.
+      </p>
+
+      <div class="hero-cta">
+        <a href="{{ url_for('login') }}"    class="btn btn-primary btn-lg" data-testid="hero-login">
+          <span class="ic">▸</span> Enter Command Console
+        </a>
+        <a href="{{ url_for('register') }}" class="btn btn-outline btn-lg" data-testid="hero-register">
+          Request Access
+        </a>
+      </div>
+
+      <div class="hero-stats">
+        <div class="hs-item">
+          <div class="hs-value" data-count="100">100</div>
+          <div class="hs-label">Live Incidents</div>
+        </div>
+        <div class="hs-sep"></div>
+        <div class="hs-item">
+          <div class="hs-value alert" data-count="8">08</div>
+          <div class="hs-label">Anomalies</div>
+        </div>
+        <div class="hs-sep"></div>
+        <div class="hs-item">
+          <div class="hs-value" data-count="10">10</div>
+          <div class="hs-label">Districts</div>
+        </div>
+        <div class="hs-sep"></div>
+        <div class="hs-item">
+          <div class="hs-value" data-count="7">7</div>
+          <div class="hs-label">Crime Vectors</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="radar" aria-hidden="true">
+        <div class="radar-ring r1"></div><div class="radar-ring r2"></div>
+        <div class="radar-ring r3"></div><div class="radar-ring r4"></div>
+        <div class="radar-cross v"></div><div class="radar-cross h"></div>
+        <div class="radar-sweep"></div>
+        <span class="ping"        style="--x:22%;--y:34%;--d:0s"></span>
+        <span class="ping"        style="--x:68%;--y:20%;--d:.6s"></span>
+        <span class="ping"        style="--x:55%;--y:74%;--d:1.4s"></span>
+        <span class="ping"        style="--x:14%;--y:66%;--d:2.1s"></span>
+        <span class="ping ping-red" style="--x:80%;--y:58%;--d:2.8s"></span>
+        <span class="ping"        style="--x:40%;--y:50%;--d:3.5s"></span>
+        <div class="radar-label">◈ GEO-SCAN ACTIVE</div>
+      </div>
+
+      <div class="terminal" data-testid="boot-log">
+        <div class="term-head">
+          <span class="tdot"></span><span class="tdot"></span><span class="tdot"></span>
+          <span class="term-title">/netra/boot.log</span>
+        </div>
+        <div class="term-body" id="boot-log"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════ LIVE CARDS ══════════════════ -->
+  <section style="padding:0 0 2rem">
+    <header class="sec-head">
+      <span class="sec-num">§ 00</span>
+      <h2 class="sec-title">Live Intelligence</h2>
+      <span class="sec-line"></span>
+    </header>
+    <div class="live-cards" data-testid="live-cards">
+      <div class="lc-card" style="--c:#ff0055">
+        <div class="lc-badge">◈ Highest Risk District</div>
+        <div class="lc-value">BLR Urban</div>
+        <div class="lc-label">24 incidents · 5 anomalies</div>
+        <div class="lc-trend up">↑ 18% this month</div>
+      </div>
+      <div class="lc-card" style="--c:#ff8c00">
+        <div class="lc-badge">◈ Most Active Crime</div>
+        <div class="lc-value">Theft</div>
+        <div class="lc-label">28 incidents · highest frequency</div>
+        <div class="lc-trend up">↑ Vehicle theft surge</div>
+      </div>
+      <div class="lc-card" style="--c:#00e5ff">
+        <div class="lc-badge">◈ System Status</div>
+        <div class="lc-value">Online</div>
+        <div class="lc-label">Isolation Forest · DBSCAN active</div>
+        <div class="lc-trend down">✓ All systems nominal</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════ MARQUEE ══════════════════ -->
+  <section class="marquee">
+    <div class="marquee-track">
+      <span>◈ BENGALURU URBAN · 24 incidents · HIGH RISK</span>
+      <span class="mq-alert">⚠ CYBER FRAUD SPIKE · +18% this month</span>
+      <span>◇ MYSURU · risk: MEDIUM · 12 incidents</span>
+      <span>◉ 8 anomalies flagged by Isolation Forest</span>
+      <span>◈ DBSCAN CLUSTERING · 7 hotspot clusters detected</span>
+      <span class="mq-alert">⚠ VEHICLE THEFT · 8 incidents · Vijayapura</span>
+      <span>◇ BELAGAVI · risk: LOW · burglary cluster detected</span>
+      <span>◉ Link graph: 30 suspects · 20 victims · 10 locations</span>
+      <span>◈ BENGALURU URBAN · 24 incidents · HIGH RISK</span>
+      <span class="mq-alert">⚠ CYBER FRAUD SPIKE · +18% this month</span>
+      <span>◇ MYSURU · risk: MEDIUM · 12 incidents</span>
+      <span>◉ 8 anomalies flagged by Isolation Forest</span>
+      <span>◈ DBSCAN CLUSTERING · 7 hotspot clusters detected</span>
+      <span class="mq-alert">⚠ VEHICLE THEFT · 8 incidents · Vijayapura</span>
+    </div>
+  </section>
+
+  <!-- ══════════════════ CAPABILITIES ══════════════════ -->
+  <section class="cap-section">
+    <header class="sec-head">
+      <span class="sec-num">§ 01</span>
+      <h2 class="sec-title">Core Capabilities</h2>
+      <span class="sec-line"></span>
+    </header>
+    <div class="cap-grid" data-testid="feature-grid">
+      <article class="cap-card">
+        <div class="cap-num">01</div>
+        <h3>Geospatial<br>Surveillance</h3>
+        <p>Dark-tile Leaflet map with 4 overlay modes: live crime markers, density heatmap (Leaflet.heat), DBSCAN spatial clusters, and district risk forecast polygons.</p>
+        <div class="cap-tags"><span>leaflet</span><span>heatmap</span><span>geojson</span><span>live</span></div>
+      </article>
+      <article class="cap-card cap-featured">
+        <div class="cap-num">02</div>
+        <h3>AI Anomaly<br>Detection</h3>
+        <p>Isolation Forest (contamination=8%) scores every incident by geographic, temporal, and severity outliers. Red-pulsing markers flag anomalies in real time.</p>
+        <div class="cap-tags"><span>scikit-learn</span><span>iforest</span><span>dbscan</span><span>ml</span></div>
+      </article>
+      <article class="cap-card">
+        <div class="cap-num">03</div>
+        <h3>Criminal Link<br>Analysis</h3>
+        <p>Force-directed Cytoscape network of suspects, victims, and locations. Click any suspect node to open their full offender profile with timeline and MO analysis.</p>
+        <div class="cap-tags"><span>cytoscape</span><span>graph</span><span>profiles</span></div>
+      </article>
+      <article class="cap-card">
+        <div class="cap-num">04</div>
+        <h3>Trend &<br>Analytics Matrix</h3>
+        <p>Monthly crime velocity trend lines, district distribution bar chart, crime type doughnut, and real-time trend spike detection (>20% MoM increase alerts).</p>
+        <div class="cap-tags"><span>chart.js</span><span>timeseries</span><span>spikes</span></div>
+      </article>
+      <article class="cap-card">
+        <div class="cap-num">05</div>
+        <h3>Intelligence<br>Hub</h3>
+        <p>Socio-economic correlation overlay (unemployment, literacy, crime rate per 100k), DBSCAN cluster cards, MO frequency analysis, and risk zone summaries.</p>
+        <div class="cap-tags"><span>socio-econ</span><span>dbscan</span><span>risk</span></div>
+      </article>
+      <article class="cap-card">
+        <div class="cap-num">06</div>
+        <h3>Crime Reports<br>Database</h3>
+        <p>Full sortable, filterable, paginated crime table with search across all fields. One-click offender profile, crime detail page, and CSV export capability.</p>
+        <div class="cap-tags"><span>table</span><span>export</span><span>search</span></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ══════════════════ MISSION ══════════════════ -->
+  <section class="mission-section">
+    <header class="sec-head">
+      <span class="sec-num">§ 02</span>
+      <h2 class="sec-title">Intelligence Loop</h2>
+      <span class="sec-line"></span>
+    </header>
+    <ol class="mission-list">
+      <li><em>Ingest</em><span>Records stream in from field units, CSV uploads, and the manual report form.</span></li>
+      <li><em>Detect</em><span>Isolation Forest flags outliers; DBSCAN clusters geographic hotspots automatically.</span></li>
+      <li><em>Correlate</em><span>Graph engine links suspects, victims, and locations — exposing hidden networks.</span></li>
+      <li><em>Forecast</em><span>District risk polygons recalculated on demand; hour-of-day matrices pinpoint timing patterns.</span></li>
+      <li><em>Deploy</em><span>Analysts export intelligence reports and push actionable briefings to field commanders.</span></li>
+    </ol>
+  </section>
+
+  <!-- ══════════════════ CTA ══════════════════ -->
+  <section class="cta-strip" data-testid="cta-strip">
+    <div>
+      <div class="cta-eyebrow">READY TO OPERATIONALISE?</div>
+      <h3>Bring predictive intelligence to your district command.</h3>
+    </div>
+    <div class="cta-actions">
+      <a href="{{ url_for('login') }}"    class="btn btn-primary btn-lg">Login as Admin</a>
+      <a href="{{ url_for('register') }}" class="btn btn-outline btn-lg">Create Analyst Account</a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="landing-footer">
+  <span>© 2026 State Crime Records Bureau · Karnataka Police</span>
+  <span class="foot-mid">DEMO CREDENTIALS · <code>admin@netra.gov.in</code> / <code>admin123</code></span>
+  <span>NETRA v2.0.0 · CLASSIFIED · DEMO BUILD</span>
+</footer>
+
+<script src="{{ url_for('static', filename='js/particles.js') }}"></script>
+<script>
+// Live clock
+(function() {
+  const el = document.getElementById('nav-time');
+  const upd = () => el && (el.textContent = new Date().toLocaleTimeString('en-GB') + ' IST');
+  upd(); setInterval(upd, 1000);
+})();
+
+// Boot log
+(function() {
+  const host = document.getElementById('boot-log');
+  if (!host) return;
+  const lines = [
+    ['ok',   'kernel/netra.core        ........ loaded'],
+    ['ok',   'auth/flask-login         ........ ready'],
+    ['ok',   'db/sqlite netra.db       ........ connected'],
+    ['ok',   'ml/isolation-forest      ........ fitted (contamination=0.08)'],
+    ['ok',   'ml/dbscan-clustering     ........ ready (eps=0.06)'],
+    ['ok',   'data/synthetic_crimes    ........ 100 rows loaded'],
+    ['warn', 'anomalies detected       ........ 08 events flagged'],
+    ['ok',   'geo/leaflet dark-carto   ........ online'],
+    ['ok',   'geo/leaflet-heat         ........ density layer ready'],
+    ['ok',   'graph/cytoscape cose     ........ network layout ready'],
+    ['ok',   'api/socioeconomic        ........ 10 districts correlated'],
+    ['ok',   'i18n [en · kn · hi]      ........ loaded'],
+    ['done', '[NETRA v2.0] Command surface armed · awaiting operator'],
+  ];
+  let i = 0;
+  function next() {
+    if (i >= lines.length) return;
+    const [k, txt] = lines[i++];
+    const d = document.createElement('div');
+    d.className = 'log log-' + k;
+    d.textContent = (k === 'done' ? '✓ ' : k === 'warn' ? '! ' : '› ') + txt;
+    host.appendChild(d); host.scrollTop = host.scrollHeight;
+    setTimeout(next, 220 + Math.random() * 160);
+  }
+  next();
+})();
+
+// Count-up
+(function() {
+  document.querySelectorAll('[data-count]').forEach(el => {
+    const target = parseInt(el.dataset.count, 10);
+    const dur = 1400, start = performance.now();
+    function tick(now) {
+      const p = Math.min(1, (now - start) / dur);
+      el.textContent = String(Math.round(target * (0.1 + 0.9 * p))).padStart(2, '0');
+      if (p < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+})();
+</script>
+</body>
+</html>

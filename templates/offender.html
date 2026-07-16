@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>NETRA • Offender Profile — {{ offender_name }}</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="offender-body" style="background:var(--bg);color:var(--text);font-family:var(--font-body)">
+<canvas id="particles"></canvas>
+<div class="scanlines"></div>
+
+<!-- Header -->
+<header class="dash-topbar" style="position:sticky;top:0;z-index:10;height:56px">
+  <div class="brand" style="flex-shrink:0">
+    <svg viewBox="0 0 64 32" width="32" height="17"><ellipse cx="32" cy="16" rx="28" ry="12" fill="none" stroke="#00e5ff" stroke-width="1.5"/><circle cx="32" cy="16" r="7" fill="none" stroke="#00e5ff" stroke-width="1.5"/><circle cx="32" cy="16" r="3" fill="#00e5ff"/></svg>
+    <span class="brand-text" style="font-size:.95rem">NETRA</span>
+    <span style="font-family:var(--font-mono);color:var(--text-dim);font-size:.75rem;margin-left:.3rem">/ Offender Profile</span>
+  </div>
+  <div class="topbar-sep"></div>
+  <span style="font-family:var(--font-mono);font-size:.8rem;color:#ff9ab6;letter-spacing:.1em">{{ offender_name }}</span>
+  <div style="margin-left:auto;display:flex;gap:.6rem">
+    <a href="{{ url_for('dashboard') }}" class="btn btn-ghost btn-sm">← Dashboard</a>
+    <a href="{{ url_for('logout') }}"    class="btn btn-ghost btn-sm">Logout</a>
+  </div>
+</header>
+
+<!-- Hidden data element for JS -->
+<div id="offender-name-data" data-name="{{ offender_name }}" hidden></div>
+
+<div class="offender-shell" id="offender-shell" style="position:relative;z-index:4">
+
+  <!-- Profile Header -->
+  <div class="offender-header">
+    <div>
+      <div class="oh-badge">◈ SUSPECT PROFILE · CONFIDENTIAL</div>
+      <div class="oh-name">{{ offender_name }}</div>
+      <div class="oh-meta">
+        <span>First seen: <b id="oh-first">—</b></span>
+        <span>Last seen: <b id="oh-last">—</b></span>
+      </div>
+    </div>
+    <div class="oh-stats">
+      <div class="ohs-item">
+        <div class="ohs-val danger" id="oh-total">—</div>
+        <div class="ohs-label">Total Crimes</div>
+      </div>
+      <div class="ohs-item">
+        <div class="ohs-val" id="oh-anom" style="color:#ff8c00">—</div>
+        <div class="ohs-label">Anomalies</div>
+      </div>
+      <div class="ohs-item">
+        <div class="ohs-val" id="oh-sev">—</div>
+        <div class="ohs-label">Avg Severity</div>
+      </div>
+      <div class="ohs-item">
+        <div class="ohs-val" id="oh-victims" style="color:#4dabff">—</div>
+        <div class="ohs-label">Victims</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts row -->
+  <div class="offender-grid">
+    <section class="panel" style="min-height:240px">
+      <div class="panel-head"><h2>Crime Types</h2></div>
+      <div class="chart-wrap" style="flex:1"><canvas id="chart-ct"></canvas></div>
+    </section>
+    <section class="panel" style="min-height:240px">
+      <div class="panel-head"><h2>Modus Operandi</h2></div>
+      <div class="chart-wrap" style="flex:1"><canvas id="chart-mo"></canvas></div>
+    </section>
+  </div>
+
+  <div class="offender-grid">
+    <section class="panel" style="min-height:200px">
+      <div class="panel-head"><h2>Districts Operated In</h2></div>
+      <div class="chart-wrap" style="flex:1"><canvas id="chart-districts"></canvas></div>
+    </section>
+    <section class="panel" style="min-height:200px">
+      <div class="panel-head"><h2>Activity Timeline</h2></div>
+      <div class="chart-wrap" style="flex:1"><canvas id="chart-timeline"></canvas></div>
+    </section>
+  </div>
+
+  <!-- Map -->
+  <section class="panel offender-full" style="min-height:320px">
+    <div class="panel-head"><h2>📍 Incident Locations</h2></div>
+    <div id="offender-map" style="flex:1;min-height:280px;background:#050b13"></div>
+  </section>
+
+  <!-- Victims -->
+  <div class="offender-grid" style="margin-bottom:1rem">
+    <section class="panel">
+      <div class="panel-head"><h2>🎯 Known Victims</h2></div>
+      <div id="victim-list" style="flex:1;overflow-y:auto;max-height:200px"></div>
+    </section>
+    <section class="panel">
+      <div class="panel-head"><h2>⚠ Threat Assessment</h2></div>
+      <div style="padding:.9rem;font-family:var(--font-mono);font-size:.78rem;line-height:1.8;color:var(--text-dim);flex:1">
+        <div id="threat-text">Loading threat assessment…</div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Crime History Table -->
+  <section class="panel offender-full" style="min-height:300px">
+    <div class="panel-head">
+      <h2>📋 Crime History</h2>
+    </div>
+    <div style="flex:1;overflow:auto">
+      <table style="width:100%;border-collapse:collapse;font-family:var(--font-mono);font-size:.75rem">
+        <thead>
+          <tr>
+            <th style="text-align:left;padding:.4rem .6rem;border-bottom:1px solid var(--border);color:var(--primary);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;background:var(--panel-2);position:sticky;top:0">ID</th>
+            <th style="text-align:left;padding:.4rem .6rem;border-bottom:1px solid var(--border);color:var(--primary);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;background:var(--panel-2);position:sticky;top:0">Type</th>
+            <th style="text-align:left;padding:.4rem .6rem;border-bottom:1px solid var(--border);color:var(--primary);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;background:var(--panel-2);position:sticky;top:0">District</th>
+            <th style="text-align:left;padding:.4rem .6rem;border-bottom:1px solid var(--border);color:var(--primary);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;background:var(--panel-2);position:sticky;top:0">Date</th>
+            <th style="text-align:left;padding:.4rem .6rem;border-bottom:1px solid var(--border);color:var(--primary);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;background:var(--panel-2);position:sticky;top:0">Victim</th>
+            <th style="text-align:left;padding:.4rem .6rem;border-bottom:1px solid var(--border);color:var(--primary);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;background:var(--panel-2);position:sticky;top:0">MO</th>
+            <th style="text-align:left;padding:.4rem .6rem;border-bottom:1px solid var(--border);color:var(--primary);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;background:var(--panel-2);position:sticky;top:0">Sev</th>
+            <th style="text-align:left;padding:.4rem .6rem;border-bottom:1px solid var(--border);color:var(--primary);font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;background:var(--panel-2);position:sticky;top:0">⚠</th>
+          </tr>
+        </thead>
+        <tbody id="crime-history-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+</div><!-- /offender-shell -->
+
+<script src="{{ url_for('static', filename='js/particles.js') }}"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/offender.js') }}"></script>
+<script>
+// Threat assessment text (populated after offender.js loads data)
+setTimeout(() => {
+  const el = document.getElementById('threat-text');
+  const total  = parseInt(document.getElementById('oh-total')?.textContent) || 0;
+  const anoms  = parseInt(document.getElementById('oh-anom')?.textContent)  || 0;
+  const sev    = parseFloat(document.getElementById('oh-sev')?.textContent)  || 0;
+  const level  = anoms >= 2 || sev >= 4 ? 'HIGH' : anoms >= 1 || sev >= 3 ? 'MEDIUM' : 'LOW';
+  const col    = level === 'HIGH' ? '#ff0055' : level === 'MEDIUM' ? '#ff8c00' : '#00e5ff';
+  if (el) el.innerHTML = `
+    <div style="margin-bottom:.6rem"><span style="color:${col};font-family:var(--font-head);font-size:1rem">THREAT LEVEL: ${level}</span></div>
+    <div>Total incidents: <span style="color:#e8fdff">${total}</span></div>
+    <div>Anomalous events: <span style="color:#ff8c00">${anoms}</span></div>
+    <div>Average severity: <span style="color:#e8fdff">${sev}/5</span></div>
+    <div style="margin-top:.6rem;color:var(--text-dim);font-size:.72rem">
+      ${level === 'HIGH' ? '⚠ High-risk repeat offender. Escalate to senior investigator.' :
+        level === 'MEDIUM' ? '◉ Moderate risk. Monitor closely for further activity.' :
+        '◇ Low activity level. Standard monitoring protocol.'}
+    </div>`;
+}, 2000);
+</script>
+</body>
+</html>

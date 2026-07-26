@@ -440,6 +440,62 @@ body {
 /* Network section */
 .net-section-grid { display: grid; grid-template-columns: 1fr 300px; gap: 1rem; flex: 1; min-height: 0; }
 #cy { flex: 1; min-height: 0; background: radial-gradient(circle at 50% 50%, rgba(0,229,255,.05), transparent 70%); }
+.cy-tooltip {
+  pointer-events: none;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text);
+  background: rgba(5, 8, 15, 0.95);
+  border: 1px solid var(--primary);
+  box-shadow: 0 0 15px rgba(0, 229, 255, 0.25);
+  border-radius: 6px;
+  padding: 10px;
+  min-width: 180px;
+  z-index: 999;
+  backdrop-filter: blur(4px);
+}
+.cy-tooltip .tooltip-title {
+  font-family: var(--font-head);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 6px;
+  border-bottom: 1px solid rgba(0, 229, 255, 0.2);
+  padding-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.cy-tooltip .tooltip-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+.cy-tooltip .tooltip-row span:first-child {
+  color: var(--text-dim);
+}
+.cy-tooltip .tooltip-row span:last-child {
+  font-weight: 600;
+}
+.cy-tooltip .risk-val {
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-size: 0.65rem;
+}
+.cy-tooltip .risk-val.high {
+  background: rgba(255, 0, 85, 0.15);
+  color: #ff0055;
+  border: 1px solid rgba(255, 0, 85, 0.3);
+}
+.cy-tooltip .risk-val.medium {
+  background: rgba(255, 140, 0, 0.15);
+  color: #ff8c00;
+  border: 1px solid rgba(255, 140, 0, 0.3);
+}
+.cy-tooltip .risk-val.low {
+  background: rgba(0, 229, 255, 0.15);
+  color: #00e5ff;
+  border: 1px solid rgba(0, 229, 255, 0.3);
+}
 .net-info-panel { padding: .8rem; overflow-y: auto; display: flex; flex-direction: column; gap: .8rem; }
 .offender-chip {
   display: flex; align-items: center; gap: .6rem; padding: .5rem .7rem;

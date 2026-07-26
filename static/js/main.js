@@ -201,46 +201,248 @@
   });
 
   // ── NETWORK ─────────────────────────────────────────────────
-  async function loadNetwork() {
-    const res  = await fetch('/api/network');
+  let isSelectPopulated = false;
+  let pulseAnimationId = null;
+
+  async function loadNetwork(suspectName) {
+    const url = suspectName ? `/api/network?suspect=${encodeURIComponent(suspectName)}` : '/api/network';
+    const res = await fetch(url);
     const data = await res.json();
     const cyEl = document.getElementById('cy');
     if (!cyEl) return;
+
+    // Handle dropdown population and selecting the primary suspect
+    const targetSelect = document.getElementById('select-target-suspect');
+    const primary = data.primary_suspect;
+
+    // Populate dropdown if not already populated
+    if (targetSelect && !isSelectPopulated) {
+      try {
+        const crimesRes = await fetch('/api/crimes');
+        const crimesData = await crimesRes.json();
+        const suspects = new Set();
+        crimesData.features.forEach(f => {
+          const s = f.properties.suspect;
+          if (s && s !== 'Unknown') suspects.add(s);
+        });
+        
+        targetSelect.innerHTML = '';
+        const sortedSuspects = Array.from(suspects).sort();
+        sortedSuspects.forEach(s => {
+          const opt = document.createElement('option');
+          opt.value = s;
+          opt.textContent = s;
+          targetSelect.appendChild(opt);
+        });
+        
+        // Listen to change event on suspect select dropdown
+        targetSelect.addEventListener('change', (e) => {
+          loadNetwork(e.target.value);
+        });
+        
+        isSelectPopulated = true;
+      } catch (e) {
+        console.error("Failed to populate target select", e);
+      }
+    }
+
+    if (targetSelect && primary) {
+      targetSelect.value = primary;
+    }
 
     cy = cytoscape({
       container: cyEl,
       elements: [...data.nodes, ...data.edges],
       style: [
         { selector: 'node', style: {
-          'label': 'data(label)', 'color': '#c8d6e5', 'font-size': 9,
+          'label': 'data(label)',
+          'color': '#e8fdff',
+          'font-size': '11px',
           'font-family': 'JetBrains Mono, monospace',
-          'text-outline-color': '#05080f', 'text-outline-width': 2,
-          'width': 24, 'height': 24, 'border-width': 1.5, 'border-color': '#00e5ff',
+          'text-outline-color': '#05080f',
+          'text-outline-width': 2,
+          'width': 28,
+          'height': 28,
+          'border-width': 1.5,
+          'border-color': '#00e5ff',
+          'text-valign': 'bottom',
+          'text-margin-y': 6,
+          'text-background-opacity': 0.75,
+          'text-background-color': '#05080f',
+          'text-background-padding': '3px',
+          'text-background-shape': 'roundrectangle'
         }},
-        { selector: 'node[type = "suspect"]',  style: { 'background-color': '#ff2e8b', 'border-color': '#ff5aa4', 'width': 28, 'height': 28 } },
-        { selector: 'node[type = "victim"]',   style: { 'background-color': '#4dabff', 'border-color': '#7bc4ff' } },
-        { selector: 'node[type = "location"]', style: { 'background-color': '#ffd54a', 'border-color': '#ffe38a', 'shape': 'diamond', 'width': 22, 'height': 22 } },
+        // 🔴 Suspect: glowing, larger, red border/fill
+        { selector: 'node[type = "suspect"]', style: {
+          'width': 44,
+          'height': 44,
+          'background-color': '#ff0055',
+          'border-color': '#ff5aa4',
+          'border-width': 3.5,
+          'shadow-blur': 18,
+          'shadow-color': '#ff0055',
+          'shadow-opacity': 0.85,
+          'shadow-offset-x': 0,
+          'shadow-offset-y': 0
+        }},
+        // 🔵 Associate: accomplice
+        { selector: 'node[type = "associate"]', style: {
+          'background-color': '#0088ff',
+          'border-color': '#00e5ff',
+          'width': 32,
+          'height': 32
+        }},
+        // 🟡 Crime: crime incident
+        { selector: 'node[type = "crime"]', style: {
+          'background-color': '#ffd54a',
+          'border-color': '#ffe38a',
+          'shape': 'hexagon',
+          'width': 28,
+          'height': 28
+        }},
+        // 🟢 Victim: victim node
+        { selector: 'node[type = "victim"]', style: {
+          'background-color': '#2ed573',
+          'border-color': '#20bf6b',
+          'width': 28,
+          'height': 28
+        }},
+        // 🟣 Location: district
+        { selector: 'node[type = "location"]', style: {
+          'background-color': '#a855f7',
+          'border-color': '#c084fc',
+          'shape': 'diamond',
+          'width': 30,
+          'height': 30
+        }},
+        // 🟠 Evidence: Phone, Vehicle, Bank Account
+        { selector: 'node[type = "evidence"]', style: {
+          'background-color': '#ff8c00',
+          'border-color': '#ffb04c',
+          'shape': 'round-rectangle',
+          'width': 26,
+          'height': 26
+        }},
+        // Edges styling
         { selector: 'edge', style: {
-          'width': 1.2, 'line-color': 'rgba(0,229,255,0.3)', 'curve-style': 'bezier',
-          'target-arrow-shape': 'triangle', 'target-arrow-color': 'rgba(0,229,255,0.4)',
-          'label': 'data(label)', 'font-size': 7, 'color': '#7f95ac', 'text-rotation': 'autorotate',
+          'width': 2,
+          'line-color': 'rgba(0,229,255,0.4)',
+          'curve-style': 'bezier',
+          'target-arrow-shape': 'triangle',
+          'target-arrow-color': 'rgba(0,229,255,0.6)',
+          'arrow-scale': 1.1,
+          'label': 'data(label)',
+          'font-size': '8px',
+          'color': '#7f95ac',
+          'text-rotation': 'autorotate',
+          'text-background-opacity': 0.8,
+          'text-background-color': '#05080f',
+          'text-background-padding': '2px',
+          'text-background-shape': 'roundrectangle'
         }},
-        { selector: ':selected', style: { 'border-width': 3, 'border-color': '#fff', 'border-opacity': 0.9 } },
+        { selector: ':selected', style: {
+          'border-width': 3,
+          'border-color': '#fff',
+          'border-opacity': 0.9
+        }},
       ],
-      layout: { name: 'cose', animate: true, idealEdgeLength: 100, nodeRepulsion: 10000, gravity: 0.4, numIter: 500 },
-      wheelSensitivity: 0.25,
+      layout: {
+        name: 'cose',
+        animate: true,
+        idealEdgeLength: 140,
+        nodeRepulsion: 150000,
+        gravity: 0.25,
+        numIter: 1000,
+        refresh: 20
+      },
+      wheelSensitivity: 0.2,
     });
 
-    // Click suspect → go to offender profile
-    cy.on('tap', 'node[type = "suspect"]', (evt) => {
-      const name = evt.target.data('label');
-      window.open(`/offender/${encodeURIComponent(name)}`, '_blank');
+    // Hover tooltip events
+    const tooltip = document.getElementById('cy-tooltip');
+    
+    cy.on('mouseover', 'node', (evt) => {
+      document.body.style.cursor = 'pointer';
+      const node = evt.target;
+      const d = node.data();
+      
+      if (tooltip) {
+        let riskClass = 'low';
+        if (d.risk_score >= 75) riskClass = 'high';
+        else if (d.risk_score >= 40) riskClass = 'medium';
+        
+        tooltip.innerHTML = `
+          <div class="tooltip-title">${d.label}</div>
+          <div class="tooltip-row"><span>Role:</span> <span>${d.role || d.type}</span></div>
+          <div class="tooltip-row"><span>Risk Score:</span> <span class="risk-val ${riskClass}">${d.risk_score || 'N/A'}%</span></div>
+          <div class="tooltip-row"><span>Linked Crimes:</span> <span>${d.crimes_count || 0}</span></div>
+        `;
+        tooltip.style.display = 'block';
+      }
     });
-    cy.on('mouseover', 'node', () => { document.body.style.cursor = 'pointer'; });
-    cy.on('mouseout',  'node', () => { document.body.style.cursor = ''; });
+
+    cy.on('mousemove', 'node', (evt) => {
+      if (tooltip) {
+        const renderedPos = evt.renderedPosition;
+        tooltip.style.left = (renderedPos.x + 15) + 'px';
+        tooltip.style.top = (renderedPos.y - 15) + 'px';
+      }
+    });
+
+    cy.on('mouseout', 'node', () => {
+      document.body.style.cursor = '';
+      if (tooltip) {
+        tooltip.style.display = 'none';
+      }
+    });
+
+    // Click suspect or associate -> open profile page
+    cy.on('tap', 'node', (evt) => {
+      const node = evt.target;
+      const type = node.data('type');
+      if (type === 'suspect' || type === 'associate') {
+        const name = node.data('label');
+        window.open(`/offender/${encodeURIComponent(name)}`, '_blank');
+      }
+    });
+
+    // Gentle pulsing animation
+    startPulsingAnimation(cy);
 
     // Populate top offenders list
     loadTopOffenders();
+  }
+
+  // Animation step helper
+  function startPulsingAnimation(cyInstance) {
+    if (pulseAnimationId) {
+      cancelAnimationFrame(pulseAnimationId);
+    }
+    let time = 0;
+    function pulse() {
+      time += 0.04;
+      const scale = 1 + Math.sin(time) * 0.08;
+      
+      cyInstance.nodes('[type = "suspect"]').forEach(node => {
+        node.style({
+          'width': 44 * scale,
+          'height': 44 * scale,
+          'border-width': 3.5 + Math.sin(time) * 1.2,
+          'shadow-blur': 18 + Math.sin(time) * 5
+        });
+      });
+
+      cyInstance.nodes('[type = "associate"]').forEach(node => {
+        const scaleAcc = 1 + Math.sin(time + 1.5) * 0.05;
+        node.style({
+          'width': 32 * scaleAcc,
+          'height': 32 * scaleAcc
+        });
+      });
+
+      pulseAnimationId = requestAnimationFrame(pulse);
+    }
+    pulseAnimationId = requestAnimationFrame(pulse);
   }
 
   async function loadTopOffenders() {
@@ -256,11 +458,31 @@
     if (!container) return;
     container.innerHTML = '';
     top.forEach(([name, cnt]) => {
-      const chip = document.createElement('a');
-      chip.href = `/offender/${encodeURIComponent(name)}`;
-      chip.target = '_blank';
+      const chip = document.createElement('div');
       chip.className = 'offender-chip';
-      chip.innerHTML = `<span class="oc-name">${name}</span><span class="oc-cnt">${cnt} crimes</span>`;
+      chip.style.display = 'flex';
+      chip.style.alignItems = 'center';
+      chip.style.justifyContent = 'space-between';
+      chip.style.width = '100%';
+      chip.style.cursor = 'pointer';
+      
+      chip.innerHTML = `
+        <div class="oc-info" style="display:flex; flex-direction:column; gap:2px">
+          <span class="oc-name">${name}</span>
+          <span class="oc-cnt" style="font-size:0.65rem; color:var(--text-dim)">${cnt} crimes</span>
+        </div>
+        <a href="/offender/${encodeURIComponent(name)}" target="_blank" class="btn-profile-link" style="color:var(--primary); font-size:0.75rem; text-decoration:none; padding:4px 6px; border-radius:3px; background:rgba(0,229,255,0.08); border:1px solid rgba(0,229,255,0.2); transition:all 0.2s">PROFILE ↗</a>
+      `;
+      
+      chip.addEventListener('click', (e) => {
+        if (e.target.classList.contains('btn-profile-link')) return;
+        const targetSelect = document.getElementById('select-target-suspect');
+        if (targetSelect) {
+          targetSelect.value = name;
+        }
+        loadNetwork(name);
+      });
+      
       container.appendChild(chip);
     });
   }

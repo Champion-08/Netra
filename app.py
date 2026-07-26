@@ -638,58 +638,305 @@ def api_predict():
 
 @app.route('/api/network')
 def api_network():
-    crimes = Crime.query.all()
-    nodes = set()
-    edges = []
-    # Add suspect nodes
-    suspect_counts = Counter(c.suspect for c in crimes if c.suspect != 'Unknown')
-    for name, count in suspect_counts.items():
-        nodes.add(('suspect', name, count))
-    # victim nodes
-    victim_counts = Counter(c.victim for c in crimes if c.victim != 'Unknown')
-    for name, count in victim_counts.items():
-        nodes.add(('victim', name, count))
-    # location nodes (districts)
-    district_counts = Counter(c.district for c in crimes)
-    for name, count in district_counts.items():
-        nodes.add(('location', name, count))
+    suspect_name = request.args.get('suspect')
+    
+    # 1. Determine target suspect
+    crimes_all = Crime.query.all()
+    if not crimes_all:
+        return jsonify({'nodes': [], 'edges': []})
+        
+    suspect_counts = Counter(c.suspect for c in crimes_all if c.suspect != 'Unknown')
+    
+    if not suspect_name or suspect_name not in suspect_counts:
+        # Default to the one with the highest crime count
+        if suspect_counts:
+            suspect_name = suspect_counts.most_common(1)[0][0]
+        else:
+            suspect_name = "Nihal Shere" # Fallback if no suspects in db
 
-    # edges: suspect-victim, suspect-location, victim-location
-    for c in crimes:
-        if c.suspect != 'Unknown' and c.victim != 'Unknown':
-            edges.append((c.suspect, c.victim, 'involved_with'))
-        if c.suspect != 'Unknown':
-            edges.append((c.suspect, c.district, 'operated_in'))
-        if c.victim != 'Unknown':
-            edges.append((c.victim, c.district, 'victim_in'))
+    # 2. Get crimes of this suspect
+    suspect_crimes = [c for c in crimes_all if c.suspect == suspect_name]
+    num_linked_crimes = len(suspect_crimes)
+    
+    # Calculate suspect's risk score
+    if suspect_crimes:
+        avg_severity = sum(c.severity for c in suspect_crimes) / len(suspect_crimes)
+    else:
+        avg_severity = 3
+    suspect_risk = min(99, int(60 + len(suspect_crimes) * 5 + avg_severity * 4))
+    
+    # Initialize deterministic RNG for this suspect
+    import hashlib
+    h = int(hashlib.md5(suspect_name.encode('utf-8')).hexdigest(), 16)
+    rng = random.Random(h)
+    
+    # 3. Choose locations
+    actual_locations = list({c.district for c in suspect_crimes if c.district})
+    while len(actual_locations) < 2:
+        districts_pool = ['Bengaluru Urban', 'Mysuru', 'Mangaluru', 'Belagavi', 'Hubballi', 'Kalaburagi', 'Shivamogga', 'Tumakuru']
+        d = rng.choice(districts_pool)
+        if d not in actual_locations:
+            actual_locations.append(d)
+    selected_locations = actual_locations[:2]
+    
+    # 4. Choose victims
+    actual_victims = list({c.victim for c in suspect_crimes if c.victim and c.victim != 'Unknown'})
+    while len(actual_victims) < 2:
+        victims_pool = ['Kabir Soman', 'Radhika Dugar', 'Radha Murthy', 'Vikram Sen', 'Anil Kumble', 'Deepa Rao', 'Pooja Hegde', 'Suresh Kumar']
+        v = rng.choice(victims_pool)
+        if v not in actual_victims:
+            actual_victims.append(v)
+    selected_victims = actual_victims[:2]
+    
+    # 5. Choose crimes (Incidents)
+    actual_crimes = [c for c in suspect_crimes]
+    selected_crimes = []
+    for c in actual_crimes:
+        selected_crimes.append(c)
+        if len(selected_crimes) == 2:
+            break
+            
+    class MockCrime:
+        def __init__(self, id, crime_type, severity):
+            self.id = id
+            self.crime_type = crime_type
+            self.severity = severity
 
-    node_list = []
-    for (typ, name, count) in nodes:
-        node_list.append({
+    while len(selected_crimes) < 2:
+        mock_id = rng.randint(500, 999)
+        mock_type = rng.choice(['Cyber Crime', 'Theft', 'Fraud', 'Burglary'])
+        selected_crimes.append(MockCrime(mock_id, mock_type, 3))
+        
+    # 6. Choose accomplices (3-5 associates)
+    other_suspects_in_db = list({c.suspect for c in crimes_all if c.suspect and c.suspect != 'Unknown' and c.suspect != suspect_name})
+    num_accomplices = rng.randint(3, 5)
+    selected_accomplices = []
+    
+    db_candidates = [s for s in other_suspects_in_db]
+    rng.shuffle(db_candidates)
+    for s in db_candidates:
+        if len(selected_accomplices) < num_accomplices:
+            selected_accomplices.append(s)
+            
+    accomplice_names_pool = [
+        'Devika Rastogi', 'Viraj Tiwari', 'Saumya Mall', 'Kevin Solanki', 
+        'Dominic Kakar', 'Aryan Maharaj', 'Tara Dhar', 'Simon Tata'
+    ]
+    for name in accomplice_names_pool:
+        if len(selected_accomplices) < num_accomplices:
+            if name != suspect_name and name not in selected_accomplices:
+                selected_accomplices.append(name)
+                
+    # 7. Generate evidence nodes (1 phone, 1 bank/vehicle)
+    phone_number = f"+91 9845{rng.randint(0,9)}-{rng.randint(10000,99999)}"
+    
+    is_bank = rng.choice([True, False])
+    if is_bank:
+        evidence_label = f"SBI A/C: ******{rng.randint(1000,9999)}"
+        evidence_role = "Bank Account"
+        evidence_type_key = "bank"
+    else:
+        vehicle_brand = rng.choice(['SUV', 'Sedan', 'Bike'])
+        evidence_label = f"{rng.choice(['Black', 'White', 'Silver'])} {vehicle_brand} (KA-03-{rng.choice(['MJ','NL','KP'])}-{rng.randint(1000,9999)})"
+        evidence_role = "Vehicle Used"
+        evidence_type_key = "vehicle"
+        
+    # Construct Nodes
+    nodes = []
+    
+    # Primary suspect
+    nodes.append({
+        'data': {
+            'id': f"suspect_{suspect_name}",
+            'label': suspect_name,
+            'type': 'suspect',
+            'role': 'Primary Suspect',
+            'risk_score': suspect_risk,
+            'crimes_count': num_linked_crimes
+        }
+    })
+    
+    # Accomplices
+    for i, acc in enumerate(selected_accomplices):
+        acc_crimes_count = suspect_counts.get(acc, rng.randint(1, 3))
+        acc_risk = min(95, int(45 + acc_crimes_count * 8 + rng.randint(5, 15)))
+        nodes.append({
             'data': {
-                'id': f"{typ}_{name}",
-                'label': name,
-                'type': typ,
-                'count': count
+                'id': f"associate_{acc}",
+                'label': acc,
+                'type': 'associate',
+                'role': f'Accomplice {i+1}',
+                'risk_score': acc_risk,
+                'crimes_count': acc_crimes_count
             }
         })
-    edge_list = []
-    edge_id = 0
-    for src, tgt, rel in edges:
-        src_id = f"suspect_{src}" if src in suspect_counts else f"victim_{src}"
-        tgt_id = f"victim_{tgt}" if tgt in victim_counts else f"location_{tgt}"
-        # ensure nodes exist
-        if any(n['data']['id'] == src_id for n in node_list) and any(n['data']['id'] == tgt_id for n in node_list):
-            edge_list.append({
-                'data': {
-                    'id': f"e{edge_id}",
-                    'source': src_id,
-                    'target': tgt_id,
-                    'label': rel
-                }
-            })
-            edge_id += 1
-    return jsonify({'nodes': node_list, 'edges': edge_list})
+        
+    # Victims
+    for vic in selected_victims:
+        nodes.append({
+            'data': {
+                'id': f"victim_{vic}",
+                'label': vic,
+                'type': 'victim',
+                'role': 'Victim',
+                'risk_score': rng.randint(5, 20),
+                'crimes_count': 1
+            }
+        })
+        
+    # Locations
+    for loc in selected_locations:
+        loc_crimes = sum(1 for c in crimes_all if c.district == loc)
+        nodes.append({
+            'data': {
+                'id': f"location_{loc}",
+                'label': loc,
+                'type': 'location',
+                'role': 'Crime District',
+                'risk_score': min(90, int(30 + loc_crimes * 2)),
+                'crimes_count': loc_crimes
+            }
+        })
+        
+    # Crime Incidents
+    for c in selected_crimes:
+        nodes.append({
+            'data': {
+                'id': f"crime_{c.id}",
+                'label': f"Incident #{c.id}",
+                'type': 'crime',
+                'role': c.crime_type,
+                'risk_score': int(c.severity * 20),
+                'crimes_count': 1
+            }
+        })
+        
+    # Evidence: Phone
+    nodes.append({
+        'data': {
+            'id': 'evidence_phone',
+            'label': phone_number,
+            'type': 'evidence',
+            'role': 'Phone Device',
+            'risk_score': rng.randint(60, 85),
+            'crimes_count': rng.randint(1, 3)
+        }
+    })
+    
+    # Evidence: Bank Account or Vehicle
+    nodes.append({
+        'data': {
+            'id': f'evidence_{evidence_type_key}',
+            'label': evidence_label,
+            'type': 'evidence',
+            'role': evidence_role,
+            'risk_score': rng.randint(55, 80),
+            'crimes_count': 1
+        }
+    })
+    
+    # Construct Edges
+    edges = []
+    
+    # Suspect -> Crime Incidents
+    for c in selected_crimes:
+        edges.append({
+            'data': {
+                'id': f"e_susp_crime_{c.id}",
+                'source': f"suspect_{suspect_name}",
+                'target': f"crime_{c.id}",
+                'label': 'Involved In'
+            }
+        })
+        
+    # Victims -> Crime Incidents
+    for vic, c in zip(selected_victims, selected_crimes):
+        edges.append({
+            'data': {
+                'id': f"e_vic_crime_{vic}_{c.id}",
+                'source': f"victim_{vic}",
+                'target': f"crime_{c.id}",
+                'label': 'Involved In'
+            }
+        })
+        
+    # Suspect -> Locations
+    for loc in selected_locations:
+        edges.append({
+            'data': {
+                'id': f"e_susp_loc_{loc}",
+                'source': f"suspect_{suspect_name}",
+                'target': f"location_{loc}",
+                'label': 'Present At'
+            }
+        })
+        
+    # Suspect -> Phone
+    edges.append({
+        'data': {
+            'id': 'e_susp_phone',
+            'source': f"suspect_{suspect_name}",
+            'target': 'evidence_phone',
+            'label': 'Called'
+        }
+    })
+    
+    # Suspect -> Bank/Vehicle
+    edges.append({
+        'data': {
+            'id': f'e_susp_{evidence_type_key}',
+            'source': f"suspect_{suspect_name}",
+            'target': f'evidence_{evidence_type_key}',
+            'label': 'Money Transfer' if is_bank else 'Vehicle Used'
+        }
+    })
+    
+    # Suspect -> Accomplices (Met, Called, Money Transfer)
+    rels = ['Met', 'Called', 'Money Transfer']
+    for i, acc in enumerate(selected_accomplices):
+        edges.append({
+            'data': {
+                'id': f"e_susp_acc_{acc}",
+                'source': f"suspect_{suspect_name}",
+                'target': f"associate_{acc}",
+                'label': rels[i % len(rels)]
+            }
+        })
+        
+    # Connect Accomplices to Locations, Phone, or Vehicle to make graph realistic
+    if len(selected_accomplices) >= 1:
+        edges.append({
+            'data': {
+                'id': f"e_acc1_loc",
+                'source': f"associate_{selected_accomplices[0]}",
+                'target': f"location_{selected_locations[0]}",
+                'label': 'Present At'
+            }
+        })
+    if len(selected_accomplices) >= 2:
+        edges.append({
+            'data': {
+                'id': f"e_acc2_phone",
+                'source': f"associate_{selected_accomplices[1]}",
+                'target': 'evidence_phone',
+                'label': 'Called'
+            }
+        })
+    if len(selected_accomplices) >= 3:
+        edges.append({
+            'data': {
+                'id': f"e_acc3_{evidence_type_key}",
+                'source': f"associate_{selected_accomplices[2]}",
+                'target': f'evidence_{evidence_type_key}',
+                'label': 'Money Transfer' if is_bank else 'Vehicle Used'
+            }
+        })
+        
+    return jsonify({
+        'primary_suspect': suspect_name,
+        'nodes': nodes,
+        'edges': edges
+    })
 
 @app.route('/api/stats')
 def api_stats():

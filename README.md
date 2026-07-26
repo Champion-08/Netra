@@ -246,33 +246,6 @@ NETRA
 ├── README.md
 │
 └── screenshots
-```
-
----
-
-# 📸 Screenshots
-
-## Dashboard
-
-<img src="screenshots/dashboard.png" width="100%">
-
----
-
-## Link Analysis
-
-<img src="screenshots/link-analysis.png" width="100%">
-
----
-
-## Analytics
-
-<img src="screenshots/analytics.png" width="100%">
-
----
-
-## AI Assistant
-
-<img src="screenshots/ai-chat.png" width="100%">
 
 ---
 
@@ -364,29 +337,6 @@ NETRA enables:
 
 ✅ Improved public safety
 
----
-
-# 👨‍💻 Team
-
-**Developed by**
-
-### Nensi Gohel
-
-B.Tech Computer Engineering
-
-Gujarat Technological University
-
----
-
-# 🤝 Contributing
-
-Contributions are welcome!
-
-1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to your branch
-5. Open a Pull Request
 
 ---
 

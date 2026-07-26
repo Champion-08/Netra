@@ -3,153 +3,199 @@
 # 👁️ NETRA
 ### Neural Threat Intelligence & Response Analytics
 
-### 🚔 AI-Powered Crime Intelligence Platform for Karnataka SCRB
+### 🚔 AI-Powered Crime Intelligence Platform for Karnataka State Crime Records Bureau (SCRB)
+
+<p align="center">
 
 <img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white"/>
-<img src="https://img.shields.io/badge/Flask-3.x-black?style=for-the-badge&logo=flask"/>
-<img src="https://img.shields.io/badge/Machine%20Learning-Isolation%20Forest-ff6b6b?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/Flask-3.x-000000?style=for-the-badge&logo=flask"/>
+<img src="https://img.shields.io/badge/Machine%20Learning-Isolation%20Forest-FF6B6B?style=for-the-badge"/>
 <img src="https://img.shields.io/badge/Status-Completed-00C853?style=for-the-badge"/>
-<img src="https://img.shields.io/badge/Hackathon-Project-00E5FF?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge"/>
 
-### ⚡ "Transforming Crime Data into Actionable Intelligence"
+</p>
+
+### ⚡ Transforming Crime Data into Actionable Intelligence
+
+---
+
+### 🛰 AI • 📊 Analytics • 🔗 Link Analysis • 🤖 Predictive Intelligence
 
 </div>
 
 ---
 
-# 🚀 Overview
+# 📖 Table of Contents
 
-NETRA (Neural Threat Intelligence & Response Analytics) is an AI-driven Crime Analytics Platform developed for the Karnataka State Crime Records Bureau (SCRB).
-
-Traditional policing relies heavily on Excel sheets, manual investigations, and disconnected databases. NETRA transforms that process into an intelligent command center capable of:
-
-- 🛰 Real-Time Crime Monitoring
-- 🤖 AI Anomaly Detection
-- 📍 Interactive Crime Mapping
-- 🔗 Criminal Link Analysis
-- 📊 Predictive Risk Forecasting
-- 💬 AI Crime Analyst
-- 🌍 Multi-Language Support
-- 🔐 Secure Role-Based Access
-
----
-
-# ✨ Features
-
-## 🗺 Live Crime Intelligence
-
-✔ Interactive Map
-
-✔ Crime Heatspots
-
-✔ District Filtering
-
-✔ Crime Category Filtering
-
-✔ Live Incident Tracking
+- Overview
+- Problem Statement
+- Solution
+- Features
+- System Architecture
+- Technology Stack
+- Screenshots
+- Installation
+- Project Structure
+- API Endpoints
+- User Roles
+- Future Scope
+- Team
+- License
 
 ---
 
-## 🤖 AI Intelligence
+# 🌟 Overview
 
-✔ Isolation Forest Anomaly Detection
+NETRA (Neural Threat Intelligence & Response Analytics) is an AI-powered Crime Analytics Platform developed for the **Karnataka State Crime Records Bureau (SCRB)**.
 
-✔ Predictive Crime Forecast
+The platform replaces traditional Excel-based crime management with an intelligent command center capable of visualizing crimes, detecting anomalies, predicting high-risk districts, analyzing criminal networks, and assisting investigators using Artificial Intelligence.
 
-✔ Risk Scoring
+---
 
-✔ Crime Pattern Discovery
+# 🚨 Problem Statement
 
-✔ Smart Crime Insights
+Modern law enforcement agencies face several challenges while handling large volumes of crime data.
+
+### Existing Problems
+
+- 📄 Manual record keeping
+- 📊 Dependency on spreadsheets
+- ⏳ Slow investigation process
+- 🔍 Difficult to identify hidden criminal relationships
+- 📍 No centralized visualization
+- 🚨 Delayed anomaly detection
+- 📈 No predictive crime forecasting
+- 🤝 Fragmented investigation workflow
+
+These limitations reduce investigation efficiency and delay critical decision-making.
+
+---
+
+# 💡 Our Solution
+
+NETRA provides an intelligent crime investigation ecosystem powered by Artificial Intelligence.
+
+The platform combines:
+
+- 🤖 AI-based anomaly detection
+- 📍 Interactive GIS crime mapping
+- 🔗 Criminal link analysis
+- 📈 District-wise crime prediction
+- 💬 AI-powered analyst assistant
+- 📊 Live analytics dashboard
+- 🔐 Secure authentication
+- 🌐 Multilingual interface
+
+Everything investigators need is available from a single modern dashboard.
+
+---
+
+# ✨ Key Features
+
+## 🗺 Crime Intelligence Dashboard
+
+- Interactive Map
+- Live Crime Monitoring
+- District Filters
+- Crime Category Filters
+- Heat Map
+- Live Alerts
+
+---
+
+## 🤖 Artificial Intelligence
+
+- Isolation Forest Anomaly Detection
+- Predictive Risk Scoring
+- Crime Trend Forecasting
+- Intelligent Crime Insights
 
 ---
 
 ## 🔗 Criminal Link Analysis
 
-Visual investigation graph showing relationships between
+Visual investigation graph connecting
 
 - 👤 Suspects
 - 📞 Phone Numbers
 - 🚗 Vehicles
 - 📍 Locations
-- 📂 Crime Incidents
+- 📂 Incidents
 - 👥 Associates
 
 ---
 
-## 📊 Analytics Dashboard
+## 📊 Analytics
 
-- Monthly Trends
+- Monthly Crime Trends
 - Crime Distribution
-- District Comparison
-- Crime Frequency
-- Top Suspects
+- Top Districts
+- Crime Categories
+- Repeat Offenders
+- Risk Score Dashboard
 
 ---
 
 ## 💬 AI Analyst
 
-Ask questions like:
+Natural language assistant capable of answering:
 
-> Show cyber crimes in Bengaluru
-
-> Top suspect this month
-
-> Highest risk district
-
-> Show anomaly incidents
+- Show cyber crimes
+- Highest risk district
+- Top suspects
+- Crime statistics
+- Incident lookup
+- Anomaly reports
 
 ---
 
 ## 🔐 Authentication
 
 - Login
-- Register
+- Registration
 - Password Encryption
 - Flask Login
 - Role-Based Access
 
 ---
 
-# 🎯 Why NETRA?
+## 🌐 Multi Language Support
 
-Traditional Investigation
-
-❌ Excel Sheets
-
-❌ Manual Investigation
-
-❌ Difficult Pattern Detection
-
-❌ Slow Decision Making
-
-⬇️
-
-NETRA
-
-✅ AI Powered
-
-✅ Live Dashboard
-
-✅ Predictive Analytics
-
-✅ Criminal Network Detection
-
-✅ Real-Time Intelligence
+- 🇬🇧 English
+- 🇮🇳 हिन्दी
+- 🇮🇳 ಕನ್ನಡ
 
 ---
 
-# 🧠 AI Technologies
+# 🏗 System Architecture
 
-- Isolation Forest
-- Predictive Risk Engine
-- Synthetic Crime Data Generator
-- Fuzzy Search
-- Natural Language Query Engine
+```
+Crime Dataset
+      │
+      ▼
+Data Processing
+      │
+      ▼
+AI Engine
+(Isolation Forest)
+      │
+      ▼
+Analytics Engine
+      │
+ ┌───────────────┬───────────────┐
+ ▼               ▼               ▼
+Map         Link Analysis     Dashboard
+      │
+      ▼
+AI Assistant
+      │
+      ▼
+User Dashboard
+```
 
 ---
 
-# 🛠 Tech Stack
+# 🛠 Technology Stack
 
 ## Backend
 
@@ -182,45 +228,81 @@ NETRA
 
 ---
 
-# 📷 Screenshots
+# 📂 Project Structure
+
+```
+NETRA
+│
+├── app.py
+├── requirements.txt
+├── data
+├── static
+│   ├── css
+│   ├── js
+│   └── images
+│
+├── templates
+│
+├── README.md
+│
+└── screenshots
+```
+
+---
+
+# 📸 Screenshots
 
 ## Dashboard
 
-<img src="screenshots/dashboard.png"/>
+<img src="screenshots/dashboard.png" width="100%">
 
 ---
 
 ## Link Analysis
 
-<img src="screenshots/link-analysis.png"/>
+<img src="screenshots/link-analysis.png" width="100%">
 
 ---
 
 ## Analytics
 
-<img src="screenshots/analytics.png"/>
+<img src="screenshots/analytics.png" width="100%">
 
 ---
 
 ## AI Assistant
 
-<img src="screenshots/assistant.png"/>
+<img src="screenshots/ai-chat.png" width="100%">
 
 ---
 
 # ⚙ Installation
 
+Clone Repository
+
 ```bash
-git clone https://github.com/YOUR_USERNAME/Netra.git
+git clone https://github.com/YOUR_USERNAME/NETRA.git
+```
 
-cd Netra
+Go to Project
 
+```bash
+cd NETRA
+```
+
+Install Dependencies
+
+```bash
 pip install -r requirements.txt
+```
 
+Run Application
+
+```bash
 python app.py
 ```
 
-Open
+Open Browser
 
 ```
 http://localhost:5000
@@ -228,105 +310,100 @@ http://localhost:5000
 
 ---
 
-# 📁 Project Structure
+# 🔌 API Endpoints
 
-```
-Netra
-│
-├── app.py
-├── requirements.txt
-├── static
-│     ├── css
-│     ├── js
-│
-├── templates
-│
-├── data
-│
-└── README.md
-```
+| Method | Endpoint | Description |
+|----------|------------|----------------|
+| GET | /api/crimes | Crime Data |
+| GET | /api/network | Criminal Network |
+| GET | /api/stats | Dashboard Analytics |
+| GET | /api/predict | District Prediction |
+| GET | /api/forecast | 7-Day Forecast |
+| POST | /api/chat | AI Analyst |
+| POST | /api/upload | Upload Dataset |
 
 ---
 
 # 👥 User Roles
 
 | Role | Access |
-|--------|---------|
-| 👑 Admin | Full Control |
-| 🕵 Investigator | Crime Investigation |
+|--------|----------|
+| 👑 Admin | Full System Control |
+| 🕵 Investigator | Investigation & Crime Reporting |
 | 👁 Viewer | Read Only |
 
 ---
 
-# 🌍 Supported Languages
+# 🚀 Future Scope
 
-🇬🇧 English
-
-🇮🇳 हिन्दी
-
-🇮🇳 ಕನ್ನಡ
-
----
-
-# 📈 Future Roadmap
-
-- ✅ Real-Time Alerts
-- ✅ PDF Reports
-- ✅ Mobile App
-- ✅ Facial Recognition
-- ✅ CCTV Integration
-- ✅ Drone Surveillance
-- ✅ LLM Powered Investigation
-- ✅ Voice Commands
+- 🔔 Real-Time Notifications
+- 📱 Progressive Web App
+- 📄 PDF Report Generation
+- 🤖 Large Language Model Integration
+- 🎥 CCTV Integration
+- 🛰 Drone Surveillance
+- 👤 Face Recognition
+- 📡 IoT Crime Sensors
+- ☁ Cloud Deployment
 
 ---
 
-# 🏆 Highlights
+# 📈 Expected Impact
 
-✔ AI Powered
+NETRA enables:
 
-✔ Beautiful Cyberpunk UI
+✅ Faster investigations
 
-✔ Real-Time Dashboard
+✅ Smarter policing
 
-✔ Link Analysis
+✅ AI-assisted crime analysis
 
-✔ Predictive Analytics
+✅ Better resource allocation
 
-✔ Crime Intelligence
+✅ Predictive decision making
 
-✔ Interactive Maps
+✅ Improved public safety
 
-✔ ML Based Detection
+---
 
-✔ Fully Responsive
+# 👨‍💻 Team
+
+**Developed by**
+
+### Nensi Gohel
+
+B.Tech Computer Engineering
+
+Gujarat Technological University
 
 ---
 
 # 🤝 Contributing
 
-Contributions are always welcome!
+Contributions are welcome!
 
-Fork 🍴
-
-Improve 🚀
-
-Create PR ❤️
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to your branch
+5. Open a Pull Request
 
 ---
 
-# 📄 License
+# 📜 License
 
-MIT License
+This project is licensed under the MIT License.
 
 ---
 
 <div align="center">
 
-## ⭐ If you like this project, don't forget to Star the repository ⭐
+# ⭐ Star this repository if you like NETRA ⭐
 
+### 👁️ NETRA
 
+### "The Eye of Intelligent Crime Analysis"
 
-**NETRA — The Eye of Intelligent Crime Analysis**
+Made with ❤️ using Python, Flask, Machine Learning & Data Visualization
 
 </div>
